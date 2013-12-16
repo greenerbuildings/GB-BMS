@@ -1,0 +1,17 @@
+{
+ "tasks": [
+    	{ "type": "EnOceanreader", "id": "reader", "devname": "/dev/gb/Enocean",
+    	"devlist": [ [ 8627312, 8625108 ] ], "devtype": [ "FIH63" ] },
+  	  
+  	{ "type": "LoggerTask", "id": "outdoorlight", "name": "/home/actlab/data/MetaForum/outdoorlight.log", "encoder": { "type": "TimestampedLinesEncoder" }, "quiet": true, "rotation_time": 86400 },
+  	{ "type": "LoggerTask", "id": "indoorlight", "name": "/home/actlab/data/MetaForum/indoorlight.log", "encoder": { "type": "TimestampedLinesEncoder" }, "quiet": true, "rotation_time": 86400 }
+  
+ ],
+
+ "connections": [
+  	{ "type": "Connection", "sourceTask": "reader", "sourcePort": 0, "destTask": "outdoorlight", "destPort": 0 },
+  	{ "type": "Connection", "sourceTask": "reader", "sourcePort": 1, "destTask": "indoorlight", "destPort": 0 }
+  
+  
+ ]
+}

@@ -1,0 +1,235 @@
+#!/bin/bash
+## Usage: gb_manage action [module|all] [submodulesi|all]
+## 	Actions:
+## 		start		Start a module.
+##		stop		Stop a module.
+## 		state		Determine if module is running.
+## 		stats		Meausre module performance.
+## 		help    	Display this message.
+## 		list    	List all module available.
+## 		rotatelg	Rotate logs
+##	If no module is specified or the action will apply to all modules. 
+##	This is equivalent of passing "all" as module.
+PATH=/home/actlab/MATLAB/R2012b/bin:/home/actlab/crnt/build/bin:/home/actlab/crnt/externals/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+config_dir=$(dirname $0)
+log_dir=/tmp
+signals=(2 2 2 2 15 9)
+retain_logs=4
+function generate_modules_from_cfg_files(){
+  app=$1; shift
+  comm=$1; shift
+  flags=${1:-""};shift
+  dir=${1:-$PWD}; shift
+  name_pat=${1:-\*}; shift
+  sep=$1; shift
+  ifield=${1-1};shift
+  efield=$1
+  for f in $( find $dir -name "$name_pat" ); do
+    mod_name_1=`dirname ${f/$dir\/} | sed -e "s|/|_|g"`
+    mod_name_2=`basename ${f/\.*/} | cut ${sep:+-d $sep} -f ${ifield}-${efield}`
+    mod_name=`echo ${mod_name_1/\.}_${mod_name_2:-$(basename ${f/\.*/})} | sed -e "s|__*|\_|g;s|^_||"`
+    eval ${app}_${mod_name}_command=$comm
+    eval ${app}_${mod_name}_flags=$flags
+    eval ${app}_${mod_name}_params=$f
+    eval ${app}_${mod_name}_logfile=$log_dir/$(dirname ${f/$dir\/})/gb_${app}_${mod_name}.log
+  done
+}
+[ -e $config_dir/gb_manage.conf ] && source $config_dir/gb_manage.conf 
+#Update modules and applications from configuration file
+applications=(`compgen -A variable | awk -F _ '/_command$/{print $1}' | sort -u ` )
+for app in ${applications[@]}; do
+  eval "${app}_modules=(`compgen -A variable | grep ${app} | awk -F _ '/_command$/{for(i=2;i<NF-1;i++)printf("%s_",$i);printf("%s\n",$(NF-1))}'` )"
+  for mod in `eval echo \$\{${app}_modules[@]\}`; do
+  compgen -A variable | grep -q ${app}_${mod}_logfile || eval ${app}_${mod}_logfile=$log_dir/gb_${app}_${mod}.log
+  done
+done
+
+#WEB Helperi tomcat apps
+tomcat_state(){
+  wget http://$tomcat_user:$tomcat_pwd@localhost:$tomcat_port/manager/text/list -O- -q | grep "${2}:running" >& /dev/null
+}
+tomcat_stop(){
+  wget -O- -q http://$tomcat_user:$tomcat_pwd@localhost:$tomcat_port/manager/text/stop?path=/$2
+}
+tomcat_start(){
+  wget -O- -q http://$tomcat_user:$tomcat_pwd@localhost:$tomcat_port/manager/text/start?path=/$2 
+}
+
+function app_start(){
+  a=$1
+  mod=$2
+  app_state $a $mod && echo $a $mod already started && return
+  eval "[ ! -z \$${a}_${mod}_cwd ] && cd \$${a}_${mod}_cwd"
+  eval mod_start=\${${a}_${mod}_start:-'${a}_${mod}_start'}
+  $mod_start $a $mod 2>/dev/null 
+  res=$?
+  [[ ! $res -eq 127 ]]  && return $res
+  ( exec 0<&-
+    eval logfile=\$${a}_${mod}_logfile
+    eval command=\$${a}_${mod}_command
+    eval flags=\$${a}_${mod}_flags
+    eval params=\$${a}_${mod}_params
+    [ ! -d `dirname $logfile` ] && mkdir -p $(dirname $logfile)
+    [ ${logfile%\.*} == ${logfile##*.} ] && ext='' || ext=.${logfile##*.}
+    logfile=${logfile%\.*}_$( date +%Y%m%d )${ext}
+    exec $command $flags $params >> ${logfile} 2>&1 ) </dev/null >& /dev/null &
+  eval ${a}_${mod}_post_start 2>/dev/null
+}
+
+function start(){
+  app=${1/all/${applications[@]}}
+  for a in $app; do 
+    eval app_modules=\$\{${a}_modules[@]\}
+    run_modules=${2/all/${app_modules[@]}}
+    for mod in $run_modules; do
+      [[ ! ${app_modules[@]} =~ $mod ]] && exit 1
+      app_start $a $mod 
+    done
+  done 
+}
+
+function app_stop(){
+  a=$1
+  mod=$2
+  eval mod_stop=\${${a}_${mod}_stop:-'${a}_${mod}_stop'}
+  $mod_stop $a $mod 2>/dev/null
+  res=$?
+  [[ ! $res -eq 127 ]]  && return $res
+  eval kill_signal=\$${a}_${mod}_signal
+  eval p_reg_exp=\$${a}_${mod}_pregex
+  pid=$(pgrep -f "${p_reg_exp:-`eval echo \$\{${a}_${mod}_command\}'.\\*'\$\{${a}_${mod}_params\}'.\\*'`}" | grep -v $$ )
+  echo -n Stopping $a $mod" "  
+  for s in $kill_signal ${signals[@]}; do
+    kill -$s $pid  >& /dev/null
+    echo -n .
+    ! kill -0 $pid >& /dev/null && break
+    sleep 5
+  done
+  echo
+}
+
+function stop(){
+  app=${1/all/${applications[@]}}
+  for a in $app; do 
+    eval app_modules=\$\{${a}_modules[@]\}
+    run_modules=${2/all/${app_modules[@]}}
+    for mod in $run_modules; do
+      [[ ! ${app_modules[@]} =~ $mod ]] && exit 1
+      ( app_stop $a $mod )&
+    done
+  done 
+  wait
+}
+
+function app_state(){
+   a=$1
+   mod=$2
+   eval mod_state=\${${a}_${mod}_state:-'${a}_${mod}_state'}
+   $mod_state $a $mod 2>/dev/null
+   res=$?
+   [[ ! $res -eq 127 ]]  && return $res
+   eval p_reg_exp=\$${1}_${2}_pregex
+   pid=$(pgrep -f "${p_reg_exp:-`eval echo \$\{${1}_${2}_command\}".*"\$\{${1}_${2}_params\}".*"`}" | grep -v $$ )
+   kill -0 $pid >& /dev/null
+}
+
+function state(){
+  app=${1/all/${applications[@]}}
+  for a in $app; do
+    eval app_modules=\$\{${a}_modules[@]\}
+    run_modules=${2/all/${app_modules[@]}}
+    for mod in $run_modules; do
+      [[ ! ${app_modules[@]} =~ $mod ]] && exit 1
+      app_state $a $mod && printf "%-15s %-10s \e[0;32mRUNNING\e[0m\n" $a $mod || 
+                           printf "%-15s %-10s \e[0;31mSTOPPED\e[0m\n" $a $mod
+    done
+  done
+}
+
+function app_stats(){
+  a=$1
+  mod=$2
+  eval mod_stats=\${${a}_${mod}_stats:-'${a}_${mod}_stats'}
+  $mod_stats $a $mod 2>/dev/null
+  res=$?
+  [[ ! $res -eq 127 ]]  && return $res
+  eval p_reg_exp=\$${1}_${2}_pregex
+  pid=$(pgrep -f "${p_reg_exp:-`eval echo \$\{${1}_${2}_command\}".*"\$\{${1}_${2}_params\}".*"`}" | grep -v $$ )
+  [[ ! -z $pid ]] && echo `date +"%Y-%m-%d %H:%M:%S"` $a $mod `ps -p "$pid" -o pcpu,pmem,rss,vsz,etime --no-headers`
+}
+
+function stats(){
+  app=${1/all/${applications[@]}}
+  for a in $app; do
+    eval app_modules=\$\{${a}_modules[@]\}
+    run_modules=${2/all/${app_modules[@]}}
+    for mod in $run_modules; do
+      [[ ! ${app_modules[@]} =~ $mod ]] && exit 1
+      app_stats $a $mod
+    done
+  done
+}
+
+function list(){
+  echo Components:
+  echo "    Modules:"
+  app=${1/all/${applications[@]}}
+  for a in $app; do
+    echo $a
+    eval app_modules=\$\{${a}_modules[@]\}
+    run_modules=${2/all/${app_modules[@]}}
+    for mod in $run_modules; do
+      [[ ! ${app_modules[@]} =~ $mod ]] && exit 1
+      echo "    "$mod 
+    done
+    echo
+  done
+
+}
+
+function rotatelog(){
+  app=${1/all/${applications[@]}}
+  for a in $app; do
+    eval app_modules=\$\{${a}_modules[@]\}
+    run_modules=${2/all/${app_modules[@]}}
+    for mod in $run_modules; do
+      (stop  $a $mod
+      eval log_file=\$${a}_${mod}_logfile
+      (echo logtest.log.$(ls -1  $log_file* | wc -l) ; ls -1rt $log_file*) | awk 'BEGIN{getline n}{print $0" "n;n=$0}' | xargs -L1 mv -v
+      ls -1t $log_file* | awk -v nr=$retain_logs 'NR>nr{print}'
+      start $a $mod )&
+    done
+  done
+  wait
+}
+function help(){
+  cat $0 | awk '/^##/{print $0}' | sed -e 's/^##//'
+  exit 1  
+}
+## Main routine
+action=$1; shift
+module=${1:-all}; shift
+submodule=${1:-all}
+case $action in
+  start )
+    start $module $submodule 
+    state $module $submodule ;;
+  stop  )
+    stop  $module $submodule
+    state $module $submodule ;;
+  state|status )
+    state $module $submodule ;;
+  stats )
+    stats $module $submodule ;;
+  restart )
+    stop  $module $submodule
+    start $module $submodule
+    state $module $submodule ;;
+  help )
+    help ;;
+  list )
+    list $module $submodule ;;
+  rotatelog )
+    rotatelog $module $submodule ;;
+esac

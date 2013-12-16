@@ -1,0 +1,108 @@
+@main("Rule Maintenance Help") {
+
+<h3>Variables</h3>
+<br>
+This page shows the list of all currently available variables, split on two groups: actuators and sensors.
+<br> <br>
+<b>States</b>
+<br>  <br>
+All states are shown either as a set (for example: &quot;States: false; true&quot;), or as a range
+(for example: &quot;States: 100..3000/100.0&quot;). Range is shown in a format &quot;min..max/step&quot;.
+<br> <br>
+<h3>Rules</h3>
+<br>
+The page shows currently defined rules, and gives possibility to adjust them.
+<br>  <br>
+<b>Rules</b>
+<br>  <br>
+Every rule is shown in three forms:<br>
+1) original <br>
+2) Converted to CNF <br>
+3) Split on rules by controllability <br>
+<br>
+<b>Saving/Loading</b>
+<br>  <br>
+You can type filename, and press &quot;Save&quot; to save currently defined rules. The file is stored on the server. If you know the name of the file to load, you can type it and press &quot;Load&quot;, and all the rules from this file will be loaded.
+<br>  <br>
+Warning! When saving the rules to the file that already exists, this file will be overwritten!
+<br> <br>
+<b>Adding a new rule</b>
+<br> <br>
+You can type in any rule in a propositional logic format and press &quot;Add&quot;. If the system is unable to parse the rule, it will show the reason.
+<br> <br>
+The rule may be any formula in a propositional logic. The two main parts of the formula are atomic clauses and operators.
+<br> <br>
+Example of a formula:
+<br> <br>
+(door.door1_313 = true &amp; light.luxlevel1_313 &lt; 25000) | (light.luxlevelout1_313 &lt; 20000) =&gt; lamp.lamp1_326 = true | light.dimmer1_313 = [1; 2]
+<br> <br>
+Please use the following symbols for operators:
+<br> <br>
+&amp; - and   <br>
+| - or    <br>
+! - not   <br>
+=&gt; - implies  <br>
+&lt;=&gt; - if and only if   <br>
+<br> <br>
+Atomic formula should be in a format
+<br> <br>
+siname.varname OP states
+<br> <br>
+or
+<br> <br>
+sum (siname.varname [+ sinamex.varnamex]) OP states
+<br> <br>
+Where:
+<br> <br>
+&quot;siname.varname&quot; - is a full name of a variable, with &quot;siname&quot; as a service name and &quot;varname&quot; as a variable name (for example: light.dimmer1_313, door.door1_313)
+<br> <br>
+OP - operation. Possible values are:
+<br> <br>
+= - equal    <br>
+!= - not equal   <br>
+&lt; - less than (only for numeric variables)  <br>
+&gt; - more than (only for numeric variables) <br>
+&lt;= - less than or equal (only for numeric variables)  <br>
+&gt;= - more than or equal (only for numeric variables) <br>
+<br>
+&quot;states&quot; - either one state or a set of states in square brakets, divided by ';' (for example: [1; 2], [100; 200; 300]).
+<br> <br>
+It is also possible to enter a special trigger rule that removes restriction for activation of a certain variable if it was previously marked as broken or activated by user.
+<br> <br>
+The format for a trigger rule is:
+<br> <br>
+# siname.varname # blockvalue # rule
+<br> <br>
+'blockvalue' can be either &quot;user_feedback&quot; or &quot;error&quot;.
+<br> <br>
+For example:
+<br> <br>
+# lamp.lamp1_326 # user_feedback # presence.presence1_326 = false
+<br> <br>
+This means that if the lamp was previously activated by user, and is restricted for usage by the system, as soon as presence in the room 3.26 becomes false, the restriction is waived, and the lamp can be activated by the system again.
+<br> <br>
+<h3>Current environment</h3>
+<br>
+The page shows information about the environment.
+<br> <br>
+Current state of sensors and actuator are sent by the Context. If no information from the Context is obtained, the variable state is set to &quot;Unknown&quot;.
+<br> <br>
+For actuators there is also always a required state - the one that is set by the RME. The required state is always the state with minimum energy ocnsumption that satisfies all the rules (if this is possible). If the required state is not equal to the current state, the actuator is shown in red.
+<br> <br>
+Inactive rules are the controllable rules, for which the prerequisities is not satisfied, so they are not actively restricting the possible states of actuators.
+<br> <br>
+Active rules are rules, for which the prerequisities are satisfied, so they must be actively complied with.
+<br> <br>
+If there is an unsatisfiable set of active rules, such rules will be marked in red and affected actuators will temporarily not be controlled by the system. As soon as the set becomes satisfiable again, the RME will send all the required actions to satisfy it.
+<br> <br>
+<h3>Context</h3>
+<br>
+This page is not the part of the real system! The page makes it possible to test context values while the Context RabbitMQ is not working or not sending actual values.
+<br> <br>
+Using the page the value can be sent manually. For valiables with a set of values, the user can directly press the corresponding button. For variables, defined as range, the user must enter a valid number within the range and press &quot;ok&quot;.
+<br> <br>
+It is also possible to simulate that a device is actuated by user (for example: user turns on a lamp), or that a device is broken and cannot be changed by the system. For such cases the corresponding checkboxes (&quot;Error&quot; or &quot;User&quot;) should be checked. &quot;Error&quot; has higher priority over &quot;User&quot;, so checking both checkboxes means the device is broken.
+<br> <br>
+
+
+}

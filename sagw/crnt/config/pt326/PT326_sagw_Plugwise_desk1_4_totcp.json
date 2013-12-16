@@ -1,0 +1,251 @@
+{
+        "tasks": [
+        
+        {"type": "ZKWriterTask","port":9004,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/powerconsumption/powerconsumption3_326","host": "localhost","protocol": "REST"},
+        {"type": "ZKWriterTask","port":9003,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/powerconsumption/powerconsumption2_326","host": "localhost","protocol": "REST"},
+        {"type": "ZKWriterTask","port":9002,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/powerconsumption/powerconsumption1_326","host": "localhost","protocol": "REST"},
+        {"type": "ZKWriterTask","port":9025,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/powerconsumption/powerconsumption12_326","host": "localhost","protocol": "REST"},
+        {"type": "ZKWriterTask","port":9024,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/powerconsumption/powerconsumption11_326","host": "localhost","protocol": "REST"},
+        {"type": "ZKWriterTask","port":9023,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/powerconsumption/powerconsumption10_326","host": "localhost","protocol": "REST"},
+	
+		{
+      			"type": "PollDevicesTask",
+      			"id": "reader",
+      			"_serial_port": "/dev/gb/PlugWiseN3",
+			"device_list": ["0059AB58","0059A9DB","005993D2","0059ACFB","004B9A2E","0059A9EA"],
+			"_sleep_time": 3,
+			"_repeat_times": -1
+                },	 
+		{
+			"type": "SplitterById",
+			"id":	"splitter",
+			"_IDs":	["0059AB58","0059A9DB","005993D2","0059ACFB","004B9A2E","0059A9EA"]
+		},
+		{
+                        "type": "TCPWriter",
+                        "id": "writer1",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9002
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer11",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/powerconsumption1_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+		{
+                        "type": "TCPWriter",
+                        "id": "writer2",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9003
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer21",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/powerconsumption2_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+		{
+                        "type": "TCPWriter",
+                        "id": "writer3",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9004
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer31",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/powerconsumption3_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },	
+		{
+                        "type": "TCPWriter",
+                        "id": "writer4",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9023
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer41",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/powerconsumption10_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+		{
+                        "type": "TCPWriter",
+                        "id": "writer5",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9024
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer51",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/powerconsumption11_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+		{
+                        "type": "TCPWriter",
+                        "id": "writer6",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9025
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer61",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/powerconsumption12_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                }
+               
+        ],
+
+        "connections": [
+             
+		{
+			"type": "Connection",
+			"sourceTask": "reader",
+			"sourcePort": 0,
+			"destTask": "splitter",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 0,
+			"destTask": "writer1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 0,
+			"destTask": "writer11",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 1,
+			"destTask": "writer2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 1,
+			"destTask": "writer21",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 2,
+			"destTask": "writer3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 2,
+			"destTask": "writer31",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 3,
+			"destTask": "writer4",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 3,
+			"destTask": "writer41",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 4,
+			"destTask": "writer5",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 4,
+			"destTask": "writer51",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 5,
+			"destTask": "writer6",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 5,
+			"destTask": "writer61",
+			"destPort": 0
+		}
+
+
+	]
+
+}
+

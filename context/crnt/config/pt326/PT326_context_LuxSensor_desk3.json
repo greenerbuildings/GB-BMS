@@ -1,0 +1,21 @@
+{
+  "tasks": [
+    { "type": "ZKReaderTask","id": "zkreader1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/desk3/light/luxlevel3_326"    },
+    
+    { "type": "SelectiveSplitterTask", "id": "splitter1", "chSelection": [[2]] },
+    { "type": "ChangeDetector", "id": "chdetector1" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriter1","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.light.luxlevel3_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"light\", \"Json_varname\": \"luxlevel3_326\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter11","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"luxlevel3_326\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" }
+    
+  ],
+  "connections": [
+               
+    { "type": "Connection", "sourceTask": "zkreader1", "sourcePort": 0, "destTask": "splitter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "chdetector1", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrwriter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrwriter11", "destPort": 0 }
+        
+  ]
+}

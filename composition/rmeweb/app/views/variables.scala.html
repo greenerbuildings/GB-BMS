@@ -1,0 +1,104 @@
+@(variables: List[WebVariable], variableForm: Form[WebVariable], jsonFileForm: Form[WebJsonFile], changevars:Boolean)
+
+@import helper._
+
+@main("Variables") {
+    @if(variables.filter(_.controllable).size != 0) {
+        <h2>@variables.filter(_.controllable).size Actuator(s)</h2>
+        <ul>
+            @for(variable <- variables.filter(_.controllable)) {
+            <li>
+                @form(routes.ApplVariable.deleteVariable(variable.siname,variable.name)) {
+                <span class="vrinfo">@variable.siname.@variable.name</span>
+                @if(changevars){<input type="submit" value="Delete">}
+                <ul>
+                    <li>@if(variable.controllable){Actuator}else{Sensor}</li>
+                    @if(variable.slow){<li>Heating system</li>}
+                    <li>Location: @variable.location</li>
+                    <li>States: @if(variable.range == "") {@variable.states} else {@variable.range}</li>
+                </ul>
+                }
+            </li>
+            }
+        </ul>
+    }
+
+    @if(variables.filter(!_.controllable).size != 0) {
+        <h2>@variables.filter(!_.controllable).size Sensor(s)</h2>
+        <ul>
+            @for(variable <- variables.filter(!_.controllable)) {
+            <li>
+                @form(routes.ApplVariable.deleteVariable(variable.siname,variable.name)) {
+                <span class="vrinfo">@variable.siname.@variable.name</span>
+                @if(changevars){<input type="submit" value="Delete">}
+                <ul>
+                    <li>@if(variable.controllable){Actuator}else{Sensor}</li>
+                    @if(variable.slow){<li>Heating system</li>}
+                    <li>Location: @variable.location</li>
+                    <li>States: @if(variable.range == "") {@variable.states} else {@variable.range}</li>
+                </ul>
+                }
+            </li>
+            }
+        </ul>
+    }
+
+    @if(changevars) {
+        <div>
+            <h4>Variables JSON file:</h4>
+            @form(routes.ApplVariable.jsonSaveOrLoad, args = 'id -> "jsonFileForm") {
+                @inputText(
+                    field = jsonFileForm("filename"),
+                    args = '_label -> "File name", 'placeholder -> "variables.json", '_showConstraints -> false
+                )
+                <input type="submit" name="btnSave" value="Save">
+                <input type="submit" name="btnLoad" value="Load">
+            }
+        </div>
+
+        <h2>Add a new variable:</h2>
+        @form(action = routes.ApplVariable.newVariable, args = 'id -> "variableForm") {
+            @inputText(
+            field = variableForm("siname"),
+            args = '_label -> "Service Instance name", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            @inputText(
+            field = variableForm("name"),
+            args = '_label -> "Variable name", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            @inputText(
+            field = variableForm("location"),
+            args = '_label -> "Location", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            @checkbox(
+            field = variableForm("controllable"),
+            args = '_label -> "Is controllable (actuator)?", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            @checkbox(
+            field = variableForm("slow"),
+            args = '_label -> "Is heating system (actuation needs considerable time)?", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            @inputText(
+            field = variableForm("states"),
+            args = '_label -> "Variable states", 'placeholder -> "", '_showConstraints -> false, 'size -> 40
+            )
+
+            @inputText(
+            field = variableForm("datatype"),
+            args = '_label -> "Datatype", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            @inputText(
+            field = variableForm("range"),
+            args = '_label -> "Range", 'placeholder -> "", '_showConstraints -> false
+            )
+
+            <input type="submit" value="Add">
+        }
+    }
+}

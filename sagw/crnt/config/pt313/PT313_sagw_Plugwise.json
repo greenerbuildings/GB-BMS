@@ -1,0 +1,135 @@
+{
+        "tasks": [
+        {"type": "ZKWriterTask","port":9045,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/powerconsumption/powerconsumption1_313","host": "localhost","protocol": "REST"},
+	{"type": "ZKWriterTask","port":9046,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/powerconsumption/powerconsumption2_313","host": "localhost","protocol": "REST"},
+	{"type": "ZKWriterTask","port":9047,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/powerconsumption/powerconsumption3_313","host": "localhost","protocol": "REST"},
+
+{
+                        "type": "PollDevicesTask",
+                        "id": "pwreader",
+                        "_serial_port": "/dev/gb/PlugWiseN2",
+			"device_list": ["025881A0","025F68A4","025F6997"],
+			"_sleep_time": 10,
+			"_repeat_times": -1
+                },	
+		{
+			"type": "SplitterById",
+			"id":	"splitter",
+			"_IDs":	["025881A0","025F68A4","025F6997"]
+		}, 	
+		{
+                        "type": "LoggerTask",
+                        "id": "writer1",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/PT313_DEMO/powerconsumption1_313.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+                {
+        		"type": "TCPWriter",
+        		"id": "tcpwriter1",  
+      			"encoder": { "type": "TimestampedLinesEncoder" },  
+      			"port": 9045,
+      			"tcpNoDelay":true  
+      
+   		},
+		{
+                        "type": "LoggerTask",
+                        "id": "writer2",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/PT313_DEMO/powerconsumption2_313.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+                {
+        		"type": "TCPWriter",
+        		"id": "tcpwriter2",  
+      			"encoder": { "type": "TimestampedLinesEncoder" },  
+      			"port": 9046,
+      			"tcpNoDelay":true  
+      
+   		},
+		{
+                        "type": "LoggerTask",
+                        "id": "writer3",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+			
+                        },
+                        "name": "/home/actlab/PT313_DEMO/powerconsumption3_313.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+                {
+        		"type": "TCPWriter",
+        		"id": "tcpwriter3",  
+      			"encoder": { "type": "TimestampedLinesEncoder" },  
+      			"port": 9047,
+      			"tcpNoDelay":true  
+      
+   		}
+		
+		
+        ],
+
+        "connections": [
+             
+		{
+			"type": "Connection",
+			"sourceTask": "pwreader",
+			"sourcePort": 0,
+			"destTask": "splitter",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 0,
+			"destTask": "writer1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 0,
+			"destTask": "tcpwriter1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 1,
+			"destTask": "writer2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 1,
+			"destTask": "tcpwriter2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 2,
+			"destTask": "writer3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 2,
+			"destTask": "tcpwriter3",
+			"destPort": 0
+		}
+	]
+
+}
+

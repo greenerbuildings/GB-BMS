@@ -1,0 +1,36 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+GET     /help                       controllers.Application.index
+
+GET     /variables                  controllers.ApplVariable.variables
+POST    /variables                  controllers.ApplVariable.newVariable
+POST    /variables/delete           controllers.ApplVariable.deleteVariable(siname:String, varname:String)
+
+POST    /variables/saveload     controllers.ApplVariable.jsonSaveOrLoad
+POST    /rules/saveload         controllers.ApplRule.jsonSaveOrLoad
+POST    /schedule/saveload      controllers.ApplSchedule.jsonSaveOrLoad
+
+GET     /rules                  controllers.ApplRule.showRules
+POST    /rules                  controllers.ApplRule.newRule
+POST    /rules/delete           controllers.ApplRule.deleteRule(rid:Int)
+
+GET     /schedule               controllers.ApplSchedule.showSchedule
+POST    /schedule               controllers.ApplSchedule.newRule
+POST    /schedule/delete        controllers.ApplSchedule.deleteRule(rid:Int)
+
+GET     /environment            controllers.ApplEnvironment.showEnvironment
+
+GET     /context                controllers.ApplChangeVar.showChangeVarPage
+POST    /context                controllers.ApplChangeVar.changeVariable(siname:String, varname:String, statename:String)
+POST    /context/cfd            controllers.ApplChangeVar.cfdResponse
+
+GET     /manual                     controllers.ApplManual.index
+POST    /manual                     controllers.ApplManual.manualAction
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

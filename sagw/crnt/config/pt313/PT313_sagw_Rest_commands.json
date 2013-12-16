@@ -1,0 +1,166 @@
+{
+        "tasks": [
+		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/area1/light/dimmer1_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/area2/light/dimmer2_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/area2/light/dimmer3_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/area2/light/dimmer4_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/hvac/hvac1","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/hvac/hvac2","host": "localhost","protocol": "REST"},
+
+		{
+      			"type": "RESTReader",
+			"id":"RESTServer",
+			"_paths":["area1/light/dimmer1_313","area2/light/dimmer2_313","area2/light/dimmer3_313","area2/light/dimmer4_313"],
+			"_decoder":{
+					"type":"RESTJsonDecoder",
+					"channelKeys": ["luxlevel"],
+					"properties": "parameters",
+					"readTimestamp":true, 
+					"timeStampSecsFiled":"TimeStamp_s",
+					"timeStampUSecFiled":"TimeStamp_us",
+					"channelFormats":[0]
+			},
+			"_root":"/gb/sagw/potentiaal/floor3/room313",
+			"_port":8181,
+			"_numWorkers":5	                    
+    		},
+    		{
+      			"type": "RESTReader",
+			"id":"RESTServer2",
+			"_paths":["room/hvac/hvac1","room/hvac/hvac2"],
+			"_decoder":{
+					"type":"RESTJsonDecoder",
+					"channelKeys": ["mode"],
+					"properties": "parameters",
+					"readTimestamp":true, 
+					"timeStampSecsFiled":"TimeStamp_s",
+					"timeStampUSecFiled":"TimeStamp_us",
+					"channelFormats":[7]
+			},
+			"_root":"/gb/sagw/potentiaal/floor3/room313",
+			"_port":8182,
+			"_numWorkers":5	                    
+    		},
+    		{
+		  	"type": "ShellCallerTask",
+		  	"id": "shellhvac1",
+		  	"command": "ir_sendpulses.sh 0x03"
+		},
+		{
+		  	"type": "ShellCallerTask",
+		  	"id": "shellhvac2",
+		  	"command": "ir_sendpulses.sh 0x0C"
+		},
+   		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller1",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller2",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller3",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller4",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{
+		  	"type": "EnOceanWriter",
+		  	"id": "writer",
+		  	"debug": true,
+		  	"devlist": [4287393024, 4287393025, 4287393026, 4287393027], 
+		  	"devname": "/dev/gb/EnOcean"
+	  	}
+    	
+  ],
+
+        "connections": [
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 0,
+			"destTask": "controller1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller1",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 1,
+			"destTask": "controller2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller2",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 2
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 2,
+			"destTask": "controller3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller3",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 4
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 3,
+			"destTask": "controller4",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller4",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 6
+		},		
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 0,
+			"destTask": "shellhvac1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 1,
+			"destTask": "shellhvac2",
+			"destPort": 0
+		}
+		
+        ]
+}
+

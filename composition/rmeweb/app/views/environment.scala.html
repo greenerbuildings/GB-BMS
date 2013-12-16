@@ -1,0 +1,95 @@
+@(env:WebEnvironment)
+
+@import helper._
+
+@main("Current Environment") {
+    <div id="envvars">
+        <h2>Current state of actuators:</h2>
+        <ul>
+            @for(variable <- env.actuators) {
+            <li>
+            @if(variable.slow) {
+                @if(variable.curValue == variable.requiredValue) {
+                    <span >@variable.siname.@variable.name <br> Completed: @variable.curValue </span>
+                }else{ @if(variable.slowTimeStamp.isEmpty) {
+                    <span class="genErrorText">@variable.siname.@variable.name<br> Required: @variable.requiredValue <br> Not completed</span>
+                }else{
+                    <span>
+                    @variable.siname.@variable.name<br> Required: @variable.requiredValue <br> Estimated completion time: @variable.slowTimeStamp
+                    </span>
+                }}
+            }else{
+                @if(variable.curValue != variable.requiredValue) {
+                    <span class="genErrorText">
+                    @variable.siname.@variable.name = @variable.curValue <br> Required: @variable.requiredValue
+                    </span>
+                }else{
+                    <span >@variable.siname.@variable.name = @variable.curValue</span>
+                }
+            }
+            </li>
+            }
+        </ul>
+        @if(!env.actuser.isEmpty) {
+        Actuators with user input:
+        <ul>
+            @for(variable <- env.actuser) {
+            <li><span >@variable.siname.@variable.name = @variable.curValue</span></li>
+            }
+        </ul>
+        }
+        @if(!env.acterrors.isEmpty) {
+        <span class="genErrorText">Actuators with errors:
+        <ul>
+            @for(variable <- env.acterrors) {
+            <li><span >@variable.siname.@variable.name = @variable.curValue</span></li>
+            }
+        </ul></span>
+        }
+        <br>
+        @if(true){
+            <h2>Current state of sensors:</h2>
+            <ul>
+                @for(variable <- env.sensors) {
+                <li><span >@variable.siname.@variable.name = @variable.curValue</span></li>
+                }
+            </ul>
+            @if(!env.senserrors.isEmpty) {
+                <span class="genErrorText">Sensors with errors:
+                <ul>
+                    @for(variable <- env.senserrors) {
+                    <li><span >@variable.siname.@variable.name = @variable.curValue</span></li>
+                    }
+                </ul></span>
+            }
+        }
+    </div>
+    <div id="envrules">
+        @if(env.unsat.size > 0) {
+            <h2 class="genErrorText">Warning! Unsatisfiable rules!</h2>
+            <span class="genErrorText">No control over affected actuators at this moment.</span>
+            <ul>
+                @for(rule <- env.unsat) {
+                    <li><span class="genErrorText">@rule.strRule</span></li>
+                }
+            </ul>
+        }
+        <h2>Active rules:</h2>
+        <ul>
+            @for(rule <- env.active) {
+            <li><span >@rule.strRule</span></li>
+            }
+        </ul>
+        <br>
+        <h2>Inactive rules:</h2>
+        <ul>
+            @for(rule <- env.inactive) {
+            <li><span >@rule.strRule</span></li>
+            }
+        </ul>
+    </div>
+<script language="JavaScript">
+    setInterval( "ReloadAjax();", 4000 );
+    $(function() {ReloadAjax = function(){ location.reload() }});
+</script>
+}

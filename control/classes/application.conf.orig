@@ -1,0 +1,5 @@
+
+server.port = 8181
+zk.skip = false
+zk.servers = ["129.125.84.113:2181"]
+zk.path = "/gb/system"

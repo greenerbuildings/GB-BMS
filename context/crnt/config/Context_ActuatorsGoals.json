@@ -1,0 +1,42 @@
+{
+  "tasks": [
+		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181","root": "/gb/system","name":"context","host": "128.10.0.6","protocol": "REST"},
+    {"type": "RESTReader",
+      "id": "RESTServer",		
+      "_paths": ["context"],
+      "_decoder":{
+           "type": "RESTJsonTreeDecoder",
+           "channelKeys": [["varstate","varname","siname"]],
+           "shortcuts":[["process","goal"]]
+         },		
+      "_root": "/gb/system",		
+      "_port": 8181,		
+      "_numWorkers": 5
+    },
+    {"type": "ZKReaderTask","id": "zkrwriter1","zk_hosts":"129.125.84.113:2181","surrugate_task":
+		"{
+			\"type\": \"RabbitMQWriter\",		
+			\"id\": \"writer1\",		
+			\"host\": \"localhost\",		
+			\"port\": 5672,		
+			\"ExchangeName\": \"E2\",		
+			\"ExchangeType\": \"topic\",		
+			\"RoutingKey\": \"potentiaal.floor3.floor.actuators\",		
+			\"QueueName\": \"q2\",			
+			\"Json_type\": \"update\",
+			\"Json_siname\": \"actuator\",			
+			\"Json_varname\": \"actuator1\",
+			\"readVarsFromPacket\":true,
+			\"varstateType\": -1 }",
+	         "path":"/gb/system/rabbitmq"  }
+  ],
+
+  "connections": [
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 0,
+			"destTask": "zkrwriter1",
+			"destPort": 0
+		}  ]
+}

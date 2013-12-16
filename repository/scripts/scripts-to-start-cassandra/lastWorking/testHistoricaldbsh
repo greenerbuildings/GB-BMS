@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# the keyspace for the whole REPOSITORY is gbrepository
+echo "CREATING test historical column family: in our case week482012"
+
+#curl -X POST http://localhost:5000/search/gbrepository/ -d '{"CQL":"CREATE COLUMNFAMILY week482012 (KEY varchar PRIMARY KEY) WITH comparator=timestamp"}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":200}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":300}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":400}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":500}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":600}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":700}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":800}' -H 'Content-Type:"application/json"'
+curl -X PUT http://localhost:5000/data/gbrepository/week482012/testvarid -d '{"any":900}' -H 'Content-Type:"application/json"'
+
+
+#curl -X POST http://localhost:5000/data/gbrepository/ -d '{"CQL":"ALTER COLUMNFAMILY servicetype ADD sertypeoperations varchar"}' -H 'Content-Type:"application/json"'
+
+
+
+
+

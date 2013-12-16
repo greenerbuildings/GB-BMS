@@ -1,0 +1,56 @@
+@(rules: List[WebRule], ruleForm: Form[WebRule], jsonFileForm: Form[WebJsonFile], strError:String)
+
+@import helper._
+
+@main("Rules") {
+    @if(rules.size != 0) {
+        <h2>@rules.size Rule(s)</h2>
+
+        <ul>
+            @for(rule <- rules) {
+            <li>
+                @form(routes.ApplRule.deleteRule(rule.rid)) {
+                <span class="vrinfo">@rule.strRule</span>
+                <input type="submit" value="Delete">
+                <ul>
+                    <li><span class="ruleinfo">CNF: @rule.cnfForm</span></li>
+                    <li><span class="ruleinfo">Controlling rules:</span>
+                        <ul>
+                            @for(rmerule <- rule.splitRules) {
+                                <li><span class="ruleinfo">@rmerule</span></li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
+                }
+            </li>
+            }
+        </ul>
+    }
+
+    <div>
+        <h3>Rules JSON file:</h3>
+        @form(routes.ApplRule.jsonSaveOrLoad, args = 'id -> "jsonFileForm") {
+        @inputText(
+            field = jsonFileForm("filename"),
+            args = '_label -> "File name", 'placeholder -> "rules.json", '_showConstraints -> false
+        )
+        <input type="submit" name="btnSave" value="Save">
+        <input type="submit" name="btnLoad" value="Load">
+        }
+    </div>
+
+    <h2>Add a new rule:</h2>
+    @form(action = routes.ApplRule.newRule, args = 'id -> "ruleForm") {
+        @inputText(
+        field = ruleForm("strRule"), args = '_label -> "Rule", 'placeholder -> "", '_showConstraints -> false, 'size -> 70
+        )
+
+        <input type="submit" value="Add">
+    }
+    @if(!strError.isEmpty) {
+        <span class="genErrorText">
+            Cannot parse rule. Reason: @strError
+        </span>
+    }
+}

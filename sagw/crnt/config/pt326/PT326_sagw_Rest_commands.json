@@ -1,0 +1,367 @@
+{
+        "tasks": [
+		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/lamp1_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk2/lamp2_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk3/lamp3_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/lamp4_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/screen1_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk2/screen2_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk3/screen3_326","host": "localhost","protocol": "REST"},
+    		{"type": "ZKWriterTask","port":8181,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/screen4_326","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/light/dimmer1_326","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk2/light/dimmer2_326","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk3/light/dimmer3_326","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/light/dimmer4_326","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/dimmer5_326","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8182,"zk_hosts":"129.125.84.113:2181", "root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/dimmer6_326","host": "localhost","protocol": "REST"},
+	
+		{
+        "type": "SwitchOnOffPlugwiseDevice",
+        "id": "writer1",
+        "_serial_port": "/dev/gb/PlugWiseN3",
+			  "_switch_on_int": false,
+			  "_device_address": "0059AB58"
+           	},
+    {
+                "type": "RESTReader",
+                      "id":"RESTServer",
+                            "_paths":["desk1/lamp1_326","desk1/screen1_326","desk2/lamp2_326","desk2/screen2_326","desk3/lamp3_326","desk3/screen3_326","desk4/lamp4_326","desk4/screen4_326"],
+                           "_decoder":{
+                           "type":"RESTJsonDecoder",
+                           "channelKeys": ["switch"],
+                           "properties": "parameters",
+                           "readTimestamp":true,
+                           "timeStampSecsFiled":"TimeStamp_s",
+                           "timeStampUSecFiled":"TimeStamp_us",
+                           "channelFormats":[0]
+                           },
+               "_root":"/gb/sagw/potentiaal/floor3/room326",
+               "_port":8181,
+              "_numWorkers":5 
+              
+         },
+         {
+            "type": "LoggerTask",
+            "id": "loggerScreenSwitch1",
+            "name": "/home/actlab/crnt_cmake/PT326_DEMO/screenswitch1_326.log",
+            "encoder": { "type": "TimestampedLinesEncoder" },
+            "quiet": false,
+            "rotation_time": 86400
+        },
+        {
+            "type": "LoggerTask",
+            "id": "loggerScreenSwitch2",
+            "name": "/home/actlab/crnt_cmake/PT326_DEMO/screenswitch2_326.log",
+            "encoder": { "type": "TimestampedLinesEncoder" },
+            "quiet": false,
+            "rotation_time": 86400
+        },
+        {
+            "type": "LoggerTask",
+            "id": "loggerScreenSwitch3",
+            "name": "/home/actlab/crnt_cmake/PT326_DEMO/screenswitch3_326.log",
+            "encoder": { "type": "TimestampedLinesEncoder" },
+            "quiet": false,
+            "rotation_time": 86400
+        },
+        {
+            "type": "LoggerTask",
+            "id": "loggerScreenSwitch4",
+            "name": "/home/actlab/crnt_cmake/PT326_DEMO/scrreenswitch4_326.log",
+            "encoder": { "type": "TimestampedLinesEncoder" },
+            "quiet": false,
+            "rotation_time": 86400
+        },
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer2",
+            	          "_serial_port": "/dev/gb/PlugWiseN3",
+			  "_switch_on_int": false,
+			  "_device_address": "0059A9DB"
+           	},
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer3",
+            	          "_serial_port": "/dev/gb/PlugWiseN2",
+			  "_switch_on_int": false,
+			  "_device_address": "004BE0A5"
+           	},
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer4",
+            	          "_serial_port": "/dev/gb/PlugWiseN2",
+			  "_switch_on_int": false,
+			  "_device_address": "0059916E"
+           	},
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer5",
+            	          "_serial_port": "/dev/gb/PlugWiseN2",
+			  "_switch_on_int": false,
+			  "_device_address": "0059AFDF"
+           	},
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer6",
+            	          "_serial_port": "/dev/gb/PlugWiseN2",
+			  "_switch_on_int": false,
+			  "_device_address": "00469834"
+           	},
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer7",
+            	          "_serial_port": "/dev/gb/PlugWiseN3",
+			  "_switch_on_int": false,
+			  "_device_address": "0059ACFB"
+           	},
+		{
+            	          "type": "SwitchOnOffPlugwiseDevice",
+            	          "id": "writer8",
+            	          "_serial_port": "/dev/gb/PlugWiseN3",
+			  "_switch_on_int": false,
+			  "_device_address": "004B9A2E"
+           	},
+		{
+      			"type": "RESTReader",
+			"id":"RESTServer2",
+			"_paths":["desk1/light/dimmer1_326","desk2/light/dimmer2_326","desk3/light/dimmer3_326","desk4/light/dimmer4_326","room/light/dimmer5_326","room/light/dimmer6_326"],
+			"_decoder":{
+					"type":"RESTJsonDecoder",
+					"channelKeys": ["luxlevel"],
+					"properties": "parameters",
+					"readTimestamp":true, 
+					"timeStampSecsFiled":"TimeStamp_s",
+					"timeStampUSecFiled":"TimeStamp_us",
+					"channelFormats":[0]
+			},
+			"_root":"/gb/sagw/potentiaal/floor3/room326",
+			"_port":8182,
+			"_numWorkers":5	                    
+    		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller1",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+        "mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller2",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller3",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller4",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller5",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+		  	"mode": 2
+		},
+		{	
+		  	"type": "DimmableLampController",
+		  	"id": "controller6",
+		  	"normFactor": 1000.0,
+		  	"gamma":1.234e-6,
+	  	  "switchOffPulseMSec": 250,
+		  	"mode": 2
+		},
+		{
+		  	"type": "EnOceanWriter",
+		  	"id": "writer",
+		  	"debug": true,
+		  	"devlist": [4290099200, 4290099201, 4290099202, 4290099204, 4290099203, 4290099205], 
+		  	"devname": "/dev/gb/Enocean"
+	  	}
+		
+		
+        ],
+
+        "connections": [
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 0,
+			"destTask": "writer1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 1,
+			"destTask": "loggerScreenSwitch1",
+			"destPort": 0
+		},
+    {
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 1,
+			"destTask": "writer2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort":2,
+			"destTask": "writer3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 3,
+			"destTask": "loggerScreenSwitch2",
+			"destPort": 0
+		},
+    {
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 3,
+			"destTask": "writer4",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 4,
+			"destTask": "writer5",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 5,
+			"destTask": "loggerScreenSwitch3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 5,
+			"destTask": "writer6",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 6,
+			"destTask": "writer7",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 7,
+			"destTask": "loggerScreenSwitch4",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer",
+			"sourcePort": 7,
+			"destTask": "writer8",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 0,
+			"destTask": "controller1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller1",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 1,
+			"destTask": "controller2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller2",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 2
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 2,
+			"destTask": "controller3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller3",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 4
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 3,
+			"destTask": "controller4",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller4",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 6
+		},		
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 4,
+			"destTask": "controller5",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller5",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 8
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer2",
+			"sourcePort": 5,
+			"destTask": "controller6",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "controller6",
+			"sourcePort": 0,
+			"destTask": "writer",
+			"destPort": 10
+		}				
+		
+        ]
+}
+

@@ -1,0 +1,26 @@
+{
+  "tasks": [
+		{ "type": "ZKReaderTask","id": "zkrLuxLevel1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0],\"readTimestamp\": true  }}","path":"/gb/sagw/metaforum/floor7/room782/light/luxlevel1_782"    },
+ 		{ "type": "ZKReaderTask","id": "zkrLuxLevelOut1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0],\"readTimestamp\": true  }}","path":"/gb/sagw/metaforum/floor7/room782/light/luxlevelout1_782"    },
+  
+    { "type": "FilterTask", "id": "meanInDoorLight", "filterPlugin": { "type": "MeanFilter", "windowSize": 5 } },
+    { "type": "FilterTask", "id": "meanOutDoorLight", "filterPlugin": { "type": "MeanFilter", "windowSize": 5 } },
+     
+    {"type": "ZKReaderTask","id": "zkwCasLuxLevel1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"RabbitMQWriter\",\"id\": \"rmqw1\",\"host\": \"localhost\",\"port\":5672,\"ExchangeName\": \"E2\",\"ExchangeType\":\"topic\",\"RoutingKey\":\"metaforum.floor7.room782.room.light.luxlevel1_782\",\"QueueName\": \"q2\",\"Json_type\": \"update\",\"Json_siname\": \"light\",\"Json_varname\": \"luxlevel1_782\",\"varstateType\": 0}","path":"/gb/system/rabbitmq"},
+		{"type": "ZKReaderTask","id": "zkwRMQLuxLevel1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"CassandraWriter\",\"id\": \"casw11\",\"databaseIP\": \"131.155.237.78\",\"databasePort\": 9160,\"keysp\": \"gbrepository\",\"columnfam\": \"variables\",\"rowk\": \"luxlevel1_782\",\"columnname\": \"updatedvalue\"}","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"},
+    		
+		{"type": "ZKReaderTask","id": "zkwRMQLuxLevelOut1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"RabbitMQWriter\",\"id\": \"rmqw1\",\"host\": \"localhost\",\"port\":5672,\"ExchangeName\": \"E2\",\"ExchangeType\":\"topic\",\"RoutingKey\":\"metaforum.floor7.room782.room.light.luxlevelout1_782\",\"QueueName\": \"q2\",\"Json_type\": \"update\",\"Json_siname\": \"light\",\"Json_varname\": \"luxlevelout1_782\",\"varstateType\": 0}","path":"/gb/system/rabbitmq"},
+		{"type": "ZKReaderTask","id": "zkwCasLuxLevelOut1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"CassandraWriter\",\"id\": \"casw11\",\"databaseIP\": \"131.155.237.78\",\"databasePort\": 9160,\"keysp\": \"gbrepository\",\"columnfam\": \"variables\",\"rowk\": \"luxlevelout1_782\",\"columnname\": \"updatedvalue\"}","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"}
+  ],
+  "connections": [
+               
+		{ "type": "Connection", "sourceTask": "zkrLuxLevel1", "sourcePort": 0, "destTask": "meanInDoorLight", "destPort": 0 },
+		{ "type": "Connection", "sourceTask": "meanInDoorLight", "sourcePort": 0, "destTask": "zkwCasLuxLevel1", "destPort": 0 },
+		{ "type": "Connection", "sourceTask": "meanInDoorLight", "sourcePort": 0, "destTask": "zkwRMQLuxLevel1", "destPort": 0 },
+		
+		{ "type": "Connection", "sourceTask": "zkrLuxLevelOut1", "sourcePort": 0, "destTask": "meanOutDoorLight", "destPort": 0 },
+		{ "type": "Connection", "sourceTask": "meanOutDoorLight", "sourcePort": 0, "destTask": "zkwCasLuxLevelOut1", "destPort": 0 },
+		{ "type": "Connection", "sourceTask": "meanOutDoorLight", "sourcePort": 0, "destTask": "zkwRMQLuxLevelOut1", "destPort": 0 }
+		
+  ]
+}

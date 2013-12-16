@@ -1,0 +1,18 @@
+#!/bin/bash
+export LD_LIBRARY_PATH=/usr/local/lib:/home/actlab/build-cassandra/myCassandraManager/lib:/home/actlab/crnt/externals/lib
+export PATH=/home/actlab/MATLAB/R2012b/bin:/home/actlab/crnt/build/bin:/home/actlab/crnt/externals/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+this_host=`ifconfig tun0 | awk '/inet addr/ {split ($2,A,":"); print A[2]}'`
+registered_host=`ps -eF | grep zkRegistration | grep -o 'host":".*"' | uniq | tr ':"' ' ' | awk  '{print $2 }'`
+if [[ ! $this_host == $registered_host ]]
+then
+  zkRegControl.sh stop all
+  zkRegControl.sh start all
+  [[ ! -z $registered_host ]] && sed -e "s|$registered_host|$this_host|" -i  /var/lib/tomcat7/webapps/gbui/js/*.js
+  [[ ! -z $registered_host ]] && sed -e "s|$registered_host|$this_host|" -i  /home/actlab/crnt/configs/context/Context_ActuatorsGoals.json
+  gb_manage restart
+fi
+
+#Detect if diospatcher is in highCPU mode.
+[[ $(gb_manage stats dispatcher | awk '{printf("%3.0f\n", $5)}') -gt 25 ]] && ( gb_manage stop dispatcher; gb_manage restart orchestrator; gb_manage start dispatcher )
+

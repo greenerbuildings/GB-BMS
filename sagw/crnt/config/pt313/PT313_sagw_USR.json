@@ -1,0 +1,58 @@
+{
+        "tasks": [
+        {"type": "ZKWriterTask","port":9041,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/presence/distance1_313","host": "localhost","protocol": "REST"},
+
+
+		{
+                        "type": "USRusbi2cReader",
+                     	"id": "reader1",
+			"devname": "/dev/gb/USR_E6",
+			//"change_address": true,
+			//"new_add": "3",
+			"maximum_gain": "0",
+			"range": "1.5",
+			"mode": "1",
+			"sample_freq":1000,
+			"registers": "2"	
+                },	
+	 	{
+                        "type": "LoggerTask",
+                        "id": "writer1",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+                        "name": "/home/actlab/PT313_DEMO/distance1_313.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+                 {
+        		"type": "TCPWriter",
+        		"id": "tcpwriter1",  
+      			"encoder": { "type": "TimestampedLinesEncoder" },  
+      			"port": 9041,
+      			"tcpNoDelay":true  
+      
+   		}
+		
+           		
+        ],
+        "connections": [
+               
+		{
+			"type": "Connection",
+			"sourceTask": "reader1",
+			"sourcePort": 0,
+			"destTask": "writer1",
+			"destPort": 0
+	 	},
+		{
+			"type": "Connection",
+			"sourceTask": "reader1",
+			"sourcePort": 0,
+			"destTask": "tcpwriter1",
+			"destPort": 0
+	 	}
+		
+		
+      ]
+}

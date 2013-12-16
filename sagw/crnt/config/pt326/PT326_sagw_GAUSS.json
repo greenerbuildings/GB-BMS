@@ -1,0 +1,91 @@
+{
+        "tasks": [
+
+	{"type": "ZKWriterTask","port":9032,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/presence/motionout1_326","host": "localhost","protocol": "REST"},
+	{"type": "ZKWriterTask","port":9033,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/presence/motionin1_326","host": "localhost","protocol": "REST"},
+        	{
+        		"type": "GaussReader",	
+			"id": "reader",		
+			"devname": "/dev/gb/GAUSS_Server"
+				
+		},	
+		{	"type": "SelectiveSplitterTask",
+			"id": "splitter",
+			"chSelection": [[1],[2]]
+ 		},
+	 	{
+                        "type": "LoggerTask",
+                        "id": "writer1",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/motionout1_326.log",
+                        "quiet": true,
+    			"rotation_time": 86400
+                },
+                {
+			"type": "TCPWriter",		
+			"id": "tcpwriter1",		
+			"encoder": { "type": "TimestampedLinesEncoder" },		
+			"port": 9032
+		},
+		{
+                        "type": "LoggerTask",
+                        "id": "writer2",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/motionin1_326.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                },
+                {
+			"type": "TCPWriter",		
+			"id": "tcpwriter2",		
+			"encoder": { "type": "TimestampedLinesEncoder" },		
+			"port": 9033
+		}
+
+
+		
+        ],
+        "connections": [
+               
+		{
+			"type": "Connection",
+			"sourceTask": "reader",
+			"sourcePort": 0,
+			"destTask": "splitter",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 0,
+			"destTask": "writer1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 0,
+			"destTask": "tcpwriter1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 1,
+			"destTask": "writer2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "splitter",
+			"sourcePort": 1,
+			"destTask": "tcpwriter2",
+			"destPort": 0
+		}		
+		
+     ]
+}

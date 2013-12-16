@@ -1,0 +1,51 @@
+{
+        "tasks": [
+    { "type": "ZKReaderTask","id": "zkreader1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/room/presence/motionout1_326"    },
+    { "type": "ZKReaderTask","id": "zkreader2","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/room/presence/motionin1_326"    },
+
+    { "type": "SelectiveSplitterTask", "id": "splitter1", "chSelection": [[2]] },
+    { "type": "SelectiveSplitterTask", "id": "splitter2", "chSelection": [[2]] },
+
+    { "type": "SimpleMerger", "id": "merger", "inports": 2, "syncToInPort0" : false },
+    { "type": "ChangeDetector", "id": "chdetector1" },
+    
+    
+    {"type": "ZKReaderTask","id": "zkrwriter1","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.room.presence.motionout1_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"presence\", \"Json_varname\": \"motionout1_326\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter11","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"motionout1_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    { "type": "ChangeDetector", "id": "chdetector2" },
+
+    {"type": "ZKReaderTask","id": "zkrwriter2","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer2\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.room.presence.motionin1_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"presence\", \"Json_varname\": \"motionin1_326\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter21","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer21\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"motionin1_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" }, 
+    
+    { "type": "TCPClientWriter", "id": "tcpwriter1", "encoder": { "type": "TimestampedLinesEncoder" }, "host": "localhost", "port": 4002 }, 
+    { "type": "TCPServerReader", "id": "tcpreader1", "decoder": { "type": "IntLinesDecoder" }, "port": 4003 },
+    { "type": "ChangeDetector", "id": "chdetector3" },
+
+    {"type": "ZKReaderTask","id": "zkrwriter3","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer3\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.room.presence.numberofpeople1_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"presence\", \"Json_varname\": \"numberofpeople1_326\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter31","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer31\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"numberofpeople1_326\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    { "type": "LoggerTask", "id": "logNumPeople", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/numberofpeople1_326.log", "quiet": true, "rotation_time": 86400 }
+    
+               
+  ],
+  "connections": [
+               
+    { "type": "Connection", "sourceTask": "zkreader1", "sourcePort": 0, "destTask": "splitter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "chdetector1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrwriter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrwriter11", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "zkreader2", "sourcePort": 0, "destTask": "splitter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "chdetector2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector2", "sourcePort": 0, "destTask": "zkrwriter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector2", "sourcePort": 0, "destTask": "zkrwriter21", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "merger", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "merger", "destPort": 1 },
+    { "type": "Connection", "sourceTask": "merger", "sourcePort": 0, "destTask": "tcpwriter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "tcpreader1", "sourcePort": 0, "destTask": "chdetector3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector3", "sourcePort": 0, "destTask": "zkrwriter3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector3", "sourcePort": 0, "destTask": "zkrwriter31", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chdetector3", "sourcePort": 0, "destTask": "logNumPeople", "destPort": 0 }
+    
+  ]
+}

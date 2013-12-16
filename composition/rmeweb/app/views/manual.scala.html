@@ -1,0 +1,15 @@
+
+@import helper._
+
+@main("Manual Control") {
+    @form(routes.ApplManual.manualAction) {
+        <input type="submit" name="unblock" value="Remove all blocks (user_feedback, error)">
+        <br><br>
+        <input type="submit" name="reread"  value="Update variable states from the Repository">
+        <br><br>
+        <input type="submit" name="recheck" value="Recheck actuators">
+        <br><br>
+        <input type="submit" name="saverules" value="Save current rules to server">
+       (WARNING! The operation will override all rules already in the file. The current rules will be added on startup during the next restart.)
+    }
+}

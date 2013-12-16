@@ -1,0 +1,1 @@
+Use the same instructions and the same jar file of version 1.0 :-)

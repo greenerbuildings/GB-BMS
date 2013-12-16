@@ -1,0 +1,86 @@
+{
+  "tasks": [
+    { "type": "ZKReaderTask","id": "zkrPresenceLeft","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0],\"readTimestamp\": true  }}",
+      "path":"/gb/sagw/metaforum/floor7/room782/desk5/presence/presenceUSR9_782"    },
+    
+    { "type": "ZKReaderTask","id": "zkrPresenceRight","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0],\"readTimestamp\": true  }}",
+      "path":"/gb/sagw/metaforum/floor7/room782/desk5/presence/presenceUSR10_782"    },
+    
+    { "type": "ChangeDetector", "id": "chDetLeft" },
+    { "type": "ChangeDetector", "id": "chDetRight" },
+    { "type": "ChangeDetector", "id": "chDetPresence" },
+    
+    { "type": "FilterTask", "id": "presenceControl", "filterPlugin": { "type": "EdgeDelayer", "delay": 15.0 } },
+ 
+    { "type": "Mapping",     "id": "mapperLeft",      "sourceVec": [[1],[-1]],     "targetVec": [[1],[0]] },
+    { "type": "Mapping",     "id": "mapperRight",     "sourceVec": [[1],[-1]],     "targetVec": [[1],[0]] },
+       
+    // Compute CW and DW
+    { "type": "SimpleMathTask",  "id": "computerWork"  ,  "mathOpPlugin": { "type": "And" } },
+    { "type": "SimpleMathTask",  "id": "deskWork"      ,  "mathOpPlugin": { "type": "Xor" } }, 
+    { "type": "SimpleMathTask",  "id": "presence"      ,  "mathOpPlugin": { "type": "Or" } }, 
+ 
+    {"type": "ZKReaderTask","id": "zkrRmqDW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{\"type\": \"RabbitMQWriter\", \"id\": \"rmqDW\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"metaforum.floor7.room782.desk5.deskwork.deskwork5_782\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"deskwork\", \"Json_varname\": \"deskwork5_782\", \"varstateType\": 2 }",
+      "path":"/gb/system/rabbitmq"},
+		{"type": "ZKReaderTask","id": "zkrCassDW","zk_hosts":"129.125.84.113:2181",
+		  "surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"cassDW\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"deskwork5_782\", \"sendBool\": true, \"columnname\": \"updatedvalue\"		 }",
+		  "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },    
+        
+    {"type": "ZKReaderTask","id": "zkrRmqPresence","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"metaforum.floor7.room782.desk5.presence.presence5_782\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"presence\", \"Json_varname\": \"presence5_782\", \"varstateType\": 2 }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassPresence","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"presence5_782\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+    
+    {"type": "ZKReaderTask","id": "zkrRmqCW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerCW1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"metaforum.floor7.room782.desk5.computerwork.computerwork5_782\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"computerwork\", \"Json_varname\": \"computerwork5_782\", \"varstateType\": 2 }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassCW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerCW11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"computerwork5_782\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },    
+  
+    { "type": "LoggerTask", "id": "logPresence", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/presence5_782.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logDeskWork", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/deskwork5_782.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logComputerWork", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/computerwork5_782.log", "quiet": true, "rotation_time": 86400 }
+              
+  ],
+  "connections": [
+    
+    //Connetc logger
+    { "type": "Connection", "sourceTask": "zkrPresenceLeft"   , "sourcePort": 0, "destTask": "mapperLeft" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "zkrPresenceRight"  , "sourcePort": 0, "destTask": "mapperRight" , "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "mapperLeft"  , "sourcePort": 0, "destTask": "chDetLeft" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapperRight"  , "sourcePort": 0, "destTask": "chDetRight" , "destPort": 0 },
+   
+    { "type": "Connection", "sourceTask": "chDetLeft"   , "sourcePort": 0, "destTask": "computerWork" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetRight"  , "sourcePort": 0, "destTask": "computerWork" , "destPort": 1 },
+    
+    { "type": "Connection", "sourceTask": "chDetLeft"   , "sourcePort": 0, "destTask": "deskWork" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetRight"  , "sourcePort": 0, "destTask": "deskWork" , "destPort": 1 },
+    
+    { "type": "Connection", "sourceTask": "mapperLeft"   , "sourcePort": 0, "destTask": "presence" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapperRight"  , "sourcePort": 0, "destTask": "presence" , "destPort": 1 },
+    
+    { "type": "Connection", "sourceTask": "presence"  , "sourcePort": 0, "destTask": "presenceControl" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "presenceControl"  , "sourcePort": 0, "destTask": "chDetPresence" , "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "presenceControl"    , "sourcePort": 0, "destTask": "logPresence"    , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "deskWork"    , "sourcePort": 0, "destTask": "logDeskWork"    , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "computerWork", "sourcePort": 0, "destTask": "logComputerWork", "destPort": 0 },
+    
+    
+    { "type": "Connection", "sourceTask": "deskWork"  , "sourcePort": 0, "destTask": "zkrRmqDW" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "deskWork"  , "sourcePort": 0, "destTask": "zkrCassDW", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "zkrRmqPresence" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "zkrCassPresence", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "computerWork"      , "sourcePort": 0, "destTask": "zkrRmqCW"       , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "computerWork"      , "sourcePort": 0, "destTask": "zkrCassCW"      , "destPort": 0 }
+  ]
+}

@@ -1,0 +1,117 @@
+@(sensors: List[org.rugco.crc.JsVariable], rangesensors:List[org.rugco.crc.JsVariable], actuators:List[org.rugco.crc.JsVariable], rangeactuators:List[org.rugco.crc.JsVariable], cfdResponseForm: Form[WebCfdResponse])
+
+@import helper._
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Change sensor value</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+    <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+</head>
+<body>
+<div id="wrapper">
+    <div id="header">
+        <h1>Change sensor value</h1>
+    </div>
+    <div id="navmain">
+        <div id="main">
+        <div class="warning">Warning! This is a simulation of devices and context information!</div>
+
+        @if(true) {
+            <h2>Cfd Response:</h2>
+            @form(action = routes.ApplChangeVar.cfdResponse, args = 'id -> "cfdResponseForm") {
+                @inputText(
+                field = cfdResponseForm("id"),
+                args = '_label -> "id", 'placeholder -> "", '_showConstraints -> false
+                )
+
+                @inputText(
+                field = cfdResponseForm("time"),
+                args = '_label -> "Time", 'placeholder -> "", '_showConstraints -> false
+                )
+                <input type="submit" value="Send">
+            }
+        }
+
+        <ul>
+
+            <h2>Sensors:</h2>
+            @for(sensor <- sensors) {
+            <li>
+                <span class="vrinfo">@sensor.siname.@sensor.name</span>
+                <ul>
+                    @for(state <- sensor.domain.states.toList.sortBy(s => s.name)) {
+                    @form(routes.ApplChangeVar.changeVariable(sensor.siname,sensor.name,state.name)) {
+                    <li> <input type="submit" value=@state.name>
+                        <input type="checkbox" name="xerror" value="xerror"> Error
+                        <input type="checkbox" name="xuser" value="xuser"> User
+                    </li>
+                    }
+                    }
+                </ul>
+            </li>
+            }
+
+            @for(sensor <- rangesensors) {
+            <li>
+                <span class="vrinfo">@sensor.siname.@sensor.name</span>
+                <ul>
+                    @form(routes.ApplChangeVar.changeVariable(sensor.siname,sensor.name,"")) {
+                    <li>
+                        Range: @sensor.domain.range
+                        <input type="text" name="state" value="" width=40>
+                        <input type="checkbox" name="xerror" value="xerror"> Error
+                        <input type="checkbox" name="xuser" value="xuser"> User
+                        <input type="submit" value="ok">
+                    </li>
+                    }
+                </ul>
+            </li>
+            }
+
+            <h2>Actuators:</h2>
+            @for(act <- actuators) {
+            <li>
+                <span class="vrinfo">@act.siname.@act.name</span>
+                <ul>
+                @for(state <- act.domain.states.toList.sortBy(s => s.name)) {
+                    @form(routes.ApplChangeVar.changeVariable(act.siname,act.name,state.name), args = 'id -> "eventTypeForm") {
+                        <li><input type="submit" value=@state.name>
+                            <input type="checkbox" name="xerror" value="xerror"> Error
+                            <input type="checkbox" name="xuser" value="xuser"> User
+                        </li>
+                    }
+                }
+                </ul>
+            </li>
+            }
+
+            @for(act <- rangeactuators) {
+            <li>
+                <span class="vrinfo">@act.siname.@act.name</span>
+                <ul>
+                    @form(routes.ApplChangeVar.changeVariable(act.siname,act.name,"")) {
+                    <li>
+                        Range: @act.domain.range
+                        <input type="text" name="state" value="" width=40>
+                        <input type="checkbox" name="xerror" value="xerror"> Error
+                        <input type="checkbox" name="xuser" value="xuser"> User
+                        <input type="submit" value="ok">
+                    </li>
+                    }
+                </ul>
+            </li>
+            }
+        </ul>
+
+
+
+        </div>
+        <div id="footer"></div>
+    </div>
+</div>
+</body>
+</html>

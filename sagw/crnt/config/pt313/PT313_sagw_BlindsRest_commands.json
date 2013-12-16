@@ -1,0 +1,125 @@
+{
+        "tasks": [
+		{"type": "ZKWriterTask","port":8184,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/blinds/blindsheight1_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8184,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/blinds/blindsheight2_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8184,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/blinds/blindsheight3_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8184,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/blinds/blindsangle1_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8184,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/blinds/blindsangle2_313","host": "localhost","protocol": "REST"},
+		{"type": "ZKWriterTask","port":8184,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room313/room/blinds/blindsangle3_313","host": "localhost","protocol": "REST"},
+
+		{
+      			"type": "RESTReader",
+			"id":"RESTServer3",
+			"_paths":["room/blinds/blindsheight1_313","room/blinds/blindsheight2_313","room/blinds/blindsheight3_313","room/blinds/blindsangle1_313","room/blinds/blindsangle2_313","room/blinds/blindsangle3_313"],
+			"_decoder":{
+					"type":"RESTJsonDecoder",
+					"channelKeys": ["height","angle"],
+					"properties": "parameters",
+					"readTimestamp":true,
+					"timeStampSecsFiled":"TimeStamp_s",
+					"timeStampUSecFiled":"TimeStamp_us",
+					"channelFormats":[0]
+			},
+			"_root":"/gb/sagw/potentiaal/floor3/room313",
+			"_port":8184,
+			"_numWorkers":5
+    		},
+    		{
+		  	"type": "BlindsController",
+		  	"id": "BlindsController1",
+		  	"DeviceNr": 1
+		},
+    		{
+		  	"type": "BlindsController",
+		  	"id": "BlindsController2",
+		  	"DeviceNr": 2
+		},
+    		{
+		  	"type": "BlindsController",
+		  	"id": "BlindsController3",
+		  	"DeviceNr": 3
+		},
+    		{
+		  	"type": "ShellCallerTask",
+		  	"id": "shellblinds1",
+		  	"command": ""
+		},
+    		{
+		  	"type": "ShellCallerTask",
+		  	"id": "shellblinds2",
+		  	"command": ""
+		},
+    		{
+		  	"type": "ShellCallerTask",
+		  	"id": "shellblinds3",
+		  	"command": ""
+		}
+  ],
+
+        "connections": [
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer3",
+			"sourcePort": 0,
+			"destTask": "BlindsController1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer3",
+			"sourcePort": 1,
+			"destTask": "BlindsController2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer3",
+			"sourcePort": 2,
+			"destTask": "BlindsController3",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer3",
+			"sourcePort": 3,
+			"destTask": "BlindsController1",
+			"destPort": 1
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer3",
+			"sourcePort": 4,
+			"destTask": "BlindsController2",
+			"destPort": 1
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "RESTServer3",
+			"sourcePort": 5,
+			"destTask": "BlindsController3",
+			"destPort": 1
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "BlindsController1",
+			"sourcePort": 0,
+			"destTask": "shellblinds1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "BlindsController2",
+			"sourcePort": 0,
+			"destTask": "shellblinds2",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "BlindsController3",
+			"sourcePort": 0,
+			"destTask": "shellblinds3",
+			"destPort": 0
+		}
+        ]
+}
+

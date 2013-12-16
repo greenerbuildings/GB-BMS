@@ -1,0 +1,3 @@
+#!/bin/bash
+NOW=$(date +"%Y%m%d")
+/home/actlab/crnt/externals/bin/gb_manage stats >> /home/actlab/gbcomponents/logs/gb_component_stats_$NOW

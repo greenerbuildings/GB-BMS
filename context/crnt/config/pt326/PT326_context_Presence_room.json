@@ -1,0 +1,37 @@
+{
+  "tasks": [
+    
+    { "type": "TCPReader", "id": "tcpReaderPresenceD1", "decoder": { "type": "ASCIIDecoder", "format":[0], "readTimestamp": true }, "host":"localhost", "port": 5006 },
+    { "type": "TCPReader", "id": "tcpReaderPresenceD2", "decoder": { "type": "ASCIIDecoder", "format":[0], "readTimestamp": true }, "host":"localhost", "port": 5013 },
+    { "type": "TCPReader", "id": "tcpReaderPresenceD3", "decoder": { "type": "ASCIIDecoder", "format":[0], "readTimestamp": true }, "host":"localhost", "port": 5020 },
+    { "type": "TCPReader", "id": "tcpReaderPresenceD4", "decoder": { "type": "ASCIIDecoder", "format":[0], "readTimestamp": true }, "host":"localhost", "port": 5027 },
+    
+    { "type": "SimpleMathTask", "waitForAllOperands": false, "id": "roomPresence" , "mathOpPlugin": { "type": "Or" }, "numOperands": 4 },
+    
+    { "type": "ChangeDetector", "id": "chdetector1" },
+    
+    {"type": "ZKReaderTask","id": "zkrRmqPresenceRoom","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\",     \"id\": \"writer1\",     \"host\": \"localhost\",     \"port\": 5672,     \"ExchangeName\": \"E2\",     \"ExchangeType\": \"topic\",     \"RoutingKey\": \"potentiaal.floor3.room326.room.presence.presenceroom1_326\",     \"QueueName\": \"q2\",       \"Json_type\": \"update\", \"Json_siname\": \"presence\",       \"Json_varname\": \"presenceroom1_326\", \"varstateType\": 2     }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassPresenceRoom","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"CassandraWriter\",     \"id\": \"writer11\",     \"databaseIP\": \"131.155.237.78\",     \"databasePort\": 9160,     \"keysp\": \"gbrepository\",     \"columnfam\": \"variables\",     \"rowk\": \"presenceroom1_326\",     \"sendBool\": true,     \"columnname\": \"updatedvalue\"     }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+    
+    { "type": "LoggerTask", "id": "logPresence", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/presenceroom1_326.log", "quiet": true, "rotation_time": 86400 }
+                   
+  ],
+  "connections": [         
+    { "type": "Connection", "sourceTask": "tcpReaderPresenceD1", "sourcePort": 0, "destTask": "roomPresence", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "tcpReaderPresenceD2", "sourcePort": 0, "destTask": "roomPresence", "destPort": 1 },
+    { "type": "Connection", "sourceTask": "tcpReaderPresenceD3", "sourcePort": 0, "destTask": "roomPresence", "destPort": 2 },
+    { "type": "Connection", "sourceTask": "tcpReaderPresenceD4", "sourcePort": 0, "destTask": "roomPresence", "destPort": 3 },
+    
+    { "type": "Connection", "sourceTask": "roomPresence", "sourcePort": 0, "destTask": "chdetector1", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrRmqPresenceRoom", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrCassPresenceRoom", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "logPresence", "destPort": 0 }
+    
+  ]
+}

@@ -1,0 +1,91 @@
+{
+        "tasks": [
+		
+		{"type": "ZKWriterTask","port":9000,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw",
+		 "name":"potentiaal/floor3/room326/desk1/presence/distance1_326","host": "localhost","protocol": "REST"},
+    
+		{
+      "type": "USRusbi2cReader",
+      "id": "USR_right",
+			"devname": "/dev/gb/USR_D1R",
+			"change_address": true,
+			"new_add": "0",
+			"maximum_gain": "0",
+			"range": "1.5",
+			"mode": "1",
+			"sample_freq":500,
+      
+			"registers": "5"
+                },
+		{
+      "type": "USRusbi2cReader",
+      "id": "USR_left",
+			"devname": "/dev/gb/USR_D1L",
+			"change_address": true,
+			"new_add": "5",
+			"maximum_gain": "0",
+			"range": "1.5",
+			"mode": "1",
+			"sample_freq":500,
+			"registers":"5"		
+                },
+       		{
+			"type": "SimpleMerger",
+			"id": "merger",
+      "syncToInPort0" : true,
+			"inports": 2
+		},
+		{
+                        "type": "TCPWriter",
+                        "id": "writer1",
+			"tcpNoDelay": true,
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder"
+                        },
+			"port":9000
+                       
+                },
+		{
+                        "type": "LoggerTask",
+                        "id": "writer11",
+ 			"encoder": {
+                                "type": "TimestampedLinesEncoder",
+				"header": "sec \t\tusec \tadd \tlight \td[in|cm|us]... \tseqNo"
+                        },
+                        "name": "/home/actlab/crnt_cmake/PT326_DEMO/USR_desk1_E0r_EAl_raw.log",
+                        "quiet": true,
+			"rotation_time": 86400
+                }
+
+        ],
+        "connections": [
+                {
+			"type": "Connection",
+			"sourceTask": "USR_right",
+			"sourcePort": 0,
+			"destTask": "merger",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "USR_left",
+			"sourcePort": 0,
+			"destTask": "merger",
+			"destPort": 1
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "merger",
+			"sourcePort": 0,
+			"destTask": "writer1",
+			"destPort": 0
+		},
+		{
+			"type": "Connection",
+			"sourceTask": "merger",
+			"sourcePort": 0,
+			"destTask": "writer11",
+			"destPort": 0
+		}
+       ]
+}

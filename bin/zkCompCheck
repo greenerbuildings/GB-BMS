@@ -1,0 +1,72 @@
+#!/bin/bash
+zk_server=129.125.84.113:2181
+
+# Create pipe name to communicate zkcli_mt and this daemon
+function quit(){
+  echo "quit" >& 3
+  rm -f $pipe $p_out
+  3<&-
+  4<&-
+  exit 0
+}
+
+
+
+trap "quit" EXIT SIGINT 2
+pipe=$(mktemp)
+p_out=$(mktemp)
+rm $pipe $p_out
+[[ ! -p $pipe ]] && mkfifo $pipe
+[[ ! -p $p_out ]] && mkfifo $p_out
+
+cli_mt 129.125.84.113:2181 < $pipe >& $p_out &
+exec 3>$pipe
+exec 4<$p_out
+function clear_pipe(){
+  while read -t 0.2  -u 4 l;do echo cleanning $l >/dev/null; done
+}
+
+clear_pipe
+function ls_dir(){
+  echo ls $1 >&3
+  nl=0
+  rc=0
+  while read -u 4 line
+  do 
+    [[ $nl -lt 1 ]] && nl=$(( $nl + 1 )) && continue 
+    [[ X$line =~ "Xtime =" ]] && break
+    [[ $line =~ "rc =" ]] && rc=$(echo $line | awk '{print $4}') || echo $line
+    [[ ! $rc -eq 0 ]] && clear_pipe && return $(( -1 * $rc )) || true
+    
+  done
+}
+
+function get_dir(){
+  echo get $1 >&3
+  nl=0
+  rc=0
+  while read -u 4 line
+  do 
+    [[ $nl -lt 1 ]] && nl=$(( $nl + 1 )) && continue 
+    [[ X$line =~ "XephemeralOwner =" ]] && echo $line && break
+    [[ $line =~ "rc =" ]] && rc=$(echo $line | awk '{print $4}') || echo $line
+    [[ ! $rc -eq 0 ]] && clear_pipe && return $(( -1 * $rc )) || true
+  done
+}
+
+function traverse_dir(){
+  #Skips Ephimeral nodes and branches containing ephimeral nodes
+  local has_ephimerals=0
+  for f in $(ls_dir $1)
+  do
+    traverse_dir $1/$f || has_ephimerals=$(( has_ephimerals + 1 ))
+  done
+  get_dir $1 | grep ephemeralOwner | grep "= 0" > /dev/null && is_ephimeral=0 || is_ephimeral=1
+  [[ $is_ephimeral -eq 0 ]] && [[ $has_ephimerals -eq 0 ]] && echo -e "\e[1;31m$1\e[0m"
+  [[ $is_ephimeral -eq 0 && $has_ephimerals -eq 0 ]] && true || false
+}
+
+[[ X$1 == X ]] && echo "usage: zkCleanTree base_path [zk_server_list]" && exit 1
+[[ X$2 != X ]] && zk_server=$2
+echo "Searching for innactive nodes:"
+traverse_dir $1

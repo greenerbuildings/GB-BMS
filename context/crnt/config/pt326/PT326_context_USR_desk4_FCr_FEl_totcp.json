@@ -1,0 +1,43 @@
+{
+  "tasks": [
+    { "type": "ZKReaderTask","id": "zkrCombinedUSR","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"readTimestamp\": false  }}",
+      "path":"/gb/sagw/potentiaal/floor3/room326/desk4/presence/distance7_326"    },
+
+    
+    { "type": "SelectiveSplitterTask", "id": "splitter", "chSelection": [ [4], [12] ] },
+    { "type": "TCPWriter", "id": "distanceRight", "tcpNoDelay": true, "encoder": { "type": "TimestampedLinesEncoder" }, "port":5021 },
+    { "type": "TCPWriter", "id": "distanceLeft" , "tcpNoDelay": true, "encoder": { "type": "TimestampedLinesEncoder" }, "port":5022 },
+    
+    
+    { "type": "ChangeDetector", "id": "chDetRight" },
+    { "type": "ChangeDetector", "id": "chDetLeft"  },
+    
+    {"type": "ZKReaderTask","id": "zkrRmqWriterRight","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"rmqWriterRight\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk4.presence.distance7_326\", \"QueueName\": \"q2\",       \"Json_type\": \"update\", \"Json_siname\": \"presence\",       \"Json_varname\": \"distance7_326\", \"varstateType\": 0     }",
+      "path":"/gb/system/rabbitmq"},
+
+    {"type": "ZKReaderTask","id": "zkrCassWriterRight","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{\"type\": \"CassandraWriter\", \"id\": \"cassWriterRight\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"distance7_326\", \"columnname\": \"updatedvalue\"     }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+    
+    {"type": "ZKReaderTask","id": "zkrRmqWriterLeft","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"rmqWriterLeft\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk4.presence.distance8_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"presence\",\"Json_varname\": \"distance8_326\", \"varstateType\": 0}",
+      "path":"/gb/system/rabbitmq"},
+
+    {"type": "ZKReaderTask","id": "zkrCassWriterLeft","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{\"type\": \"CassandraWriter\", \"id\": \"cassWriterLeft\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"distance8_326\", \"columnname\": \"updatedvalue\" }",
+      "path":"/gb/system/repository", "mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" }    
+  ],
+  "connections": [               
+    { "type": "Connection", "sourceTask": "zkrCombinedUSR", "sourcePort": 0, "destTask": "splitter"          , "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "splitter"      , "sourcePort": 0, "destTask": "distanceRight"     , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter"      , "sourcePort": 1, "destTask": "distanceLeft"      , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter"      , "sourcePort": 0, "destTask": "chDetRight"        , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter"      , "sourcePort": 1, "destTask": "chDetLeft"         , "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chDetRight"    , "sourcePort": 0, "destTask": "zkrCassWriterRight", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetLeft"     , "sourcePort": 0, "destTask": "zkrCassWriterLeft" , "destPort": 0 }
+  ]
+}

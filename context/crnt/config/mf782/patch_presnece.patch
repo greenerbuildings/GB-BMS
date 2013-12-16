@@ -1,0 +1,35 @@
+--- MF782_context_PresenceCWDW_desk2.json	2013-10-14 14:32:52.759800411 +0200
++++ MF782_context_PresenceCWDW_desk1.json	2013-10-14 14:49:52.730977636 +0200
+@@ -10,6 +10,7 @@
+     
+     { "type": "ChangeDetector", "id": "chDetLeft" },
+     { "type": "ChangeDetector", "id": "chDetRight" },
++    { "type": "ChangeDetector", "id": "chDetPresence" },
+     
+     { "type": "FilterTask", "id": "presenceControl", "filterPlugin": { "type": "EdgeDelayer", "delay": 15.0 } },
+ 
+@@ -62,10 +63,11 @@
+     { "type": "Connection", "sourceTask": "chDetLeft"   , "sourcePort": 0, "destTask": "deskWork" , "destPort": 0 },
+     { "type": "Connection", "sourceTask": "chDetRight"  , "sourcePort": 0, "destTask": "deskWork" , "destPort": 1 },
+     
+-    { "type": "Connection", "sourceTask": "chDetLeft"   , "sourcePort": 0, "destTask": "presence" , "destPort": 0 },
+-    { "type": "Connection", "sourceTask": "chDetRight"  , "sourcePort": 0, "destTask": "presence" , "destPort": 1 },
++    { "type": "Connection", "sourceTask": "mapperLeft"   , "sourcePort": 0, "destTask": "presence" , "destPort": 0 },
++    { "type": "Connection", "sourceTask": "mapperRight"  , "sourcePort": 0, "destTask": "presence" , "destPort": 1 },
+     
+     { "type": "Connection", "sourceTask": "presence"  , "sourcePort": 0, "destTask": "presenceControl" , "destPort": 0 },
++    { "type": "Connection", "sourceTask": "presenceControl"  , "sourcePort": 0, "destTask": "chDetPresence" , "destPort": 0 },
+     
+     { "type": "Connection", "sourceTask": "presenceControl"    , "sourcePort": 0, "destTask": "logPresence"    , "destPort": 0 },
+     { "type": "Connection", "sourceTask": "deskWork"    , "sourcePort": 0, "destTask": "logDeskWork"    , "destPort": 0 },
+@@ -75,8 +77,8 @@
+     { "type": "Connection", "sourceTask": "deskWork"  , "sourcePort": 0, "destTask": "zkrRmqDW" , "destPort": 0 },
+     { "type": "Connection", "sourceTask": "deskWork"  , "sourcePort": 0, "destTask": "zkrCassDW", "destPort": 0 },
+     
+-    { "type": "Connection", "sourceTask": "presenceControl", "sourcePort": 0, "destTask": "zkrRmqPresence" , "destPort": 0 },
+-    { "type": "Connection", "sourceTask": "presenceControl", "sourcePort": 0, "destTask": "zkrCassPresence", "destPort": 0 },
++    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "zkrRmqPresence" , "destPort": 0 },
++    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "zkrCassPresence", "destPort": 0 },
+     
+     { "type": "Connection", "sourceTask": "computerWork"      , "sourcePort": 0, "destTask": "zkrRmqCW"       , "destPort": 0 },
+     { "type": "Connection", "sourceTask": "computerWork"      , "sourcePort": 0, "destTask": "zkrCassCW"      , "destPort": 0 }

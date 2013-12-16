@@ -1,0 +1,21 @@
+{
+  "tasks": [
+    { "type": "USRusbi2cReader", "id": "USR06L", "devname": "/dev/gb/USR_MF782D01L", "change_address": true, "new_add": "0", "maximum_gain": "0", "range": "1", "mode": "1", "sample_freq":600, "registers": "5" },
+    { "type": "USRusbi2cReader", "id": "USR06R", "devname": "/dev/gb/USR_MF782D01R", "change_address": true, "new_add": "0", "maximum_gain": "0", "range": "1", "mode": "1", "sample_freq":600, "registers": "5" },
+    { "type": "USRusbi2cReader", "id": "USR12L", "devname": "/dev/gb/USR_MF782D02L", "change_address": true, "new_add": "0", "maximum_gain": "0", "range": "1", "mode": "1", "sample_freq":600, "registers": "5" },
+    { "type": "USRusbi2cReader", "id": "USR12R", "devname": "/dev/gb/USR_MF782D02R", "change_address": true, "new_add": "0", "maximum_gain": "0", "range": "1", "mode": "1", "sample_freq":600, "registers": "5" },
+       
+   
+    { "type": "LoggerTask", "id": "logUser01L", "encoder": { "type": "TimestampedLinesEncoder"}, "name": "/home/actlab/data/MetaForum/User01L.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logUser01R", "encoder": { "type": "TimestampedLinesEncoder"}, "name": "/home/actlab/data/MetaForum/User01R.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logUser02L", "encoder": { "type": "TimestampedLinesEncoder"}, "name": "/home/actlab/data/MetaForum/User02L.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logUser02R", "encoder": { "type": "TimestampedLinesEncoder"}, "name": "/home/actlab/data/MetaForum/User02R.log", "quiet": true, "rotation_time": 86400 }
+ ],
+  "connections": [
+    { "type":  "Connection",  "sourceTask": "USR06L", "destTask": "logUser01L" },
+    { "type":  "Connection",  "sourceTask": "USR06R", "destTask": "logUser01R" },
+    { "type":  "Connection",  "sourceTask": "USR12L", "destTask": "logUser02L" },
+    { "type":  "Connection",  "sourceTask": "USR12R", "destTask": "logUser02R" }
+  ]
+}
+

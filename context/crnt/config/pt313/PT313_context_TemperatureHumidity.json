@@ -1,0 +1,109 @@
+{
+        "tasks": [
+    { "type": "ZKReaderTask", "id": "zkreader1", "zk_hosts":"129.125.84.113:2181", "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,2],\"readTimestamp\": false }}", "path":"/gb/sagw/potentiaal/floor3/room313/room/advanticTH6_313"},
+    { "type": "ZKReaderTask", "id": "zkreader2", "zk_hosts":"129.125.84.113:2181", "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,2],\"readTimestamp\": false }}", "path":"/gb/sagw/potentiaal/floor3/room313/room/advanticTH2_313"},
+    { "type": "ZKReaderTask", "id": "zkreader3", "zk_hosts":"129.125.84.113:2181", "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,2],\"readTimestamp\": false }}", "path":"/gb/sagw/potentiaal/floor3/room313/room/advanticTH1_313"},
+    { "type": "ZKReaderTask", "id": "zkreader4", "zk_hosts":"129.125.84.113:2181", "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,2],\"readTimestamp\": false }}", "path":"/gb/sagw/potentiaal/floor3/room313/room/advanticTH4_313"},
+    { "type": "ZKReaderTask", "id": "zkreader9", "zk_hosts":"129.125.84.113:2181", "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,2],\"readTimestamp\": false }}", "path":"/gb/sagw/potentiaal/floor3/room313/room/advanticTH9_313"},
+    
+    { "type": "SelectiveSplitterTask", "id": "splitter1", "chSelection": [ [2], [3] ] },
+    { "type": "SelectiveSplitterTask", "id": "splitter2", "chSelection": [ [2], [3] ] },
+    { "type": "SelectiveSplitterTask", "id": "splitter3", "chSelection": [ [2], [3] ] },
+    { "type": "SelectiveSplitterTask", "id": "splitter4", "chSelection": [ [2], [3] ] },
+    { "type": "SelectiveSplitterTask", "id": "splitter9", "chSelection": [ [2], [3] ] },
+    
+    
+    {"type": "ZKReaderTask","id": "zkrwriterRMQT1","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQT1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.temperature.temperature1_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"temperature\", \"Json_varname\": \"temperature1_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterT1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerT1\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"temperature1_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+
+    {"type": "ZKReaderTask","id": "zkrwriterRMQH1","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQH1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.humidity.humidity1_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"humidity\", \"Json_varname\": \"humidity1_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterH1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerH1\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"humidity1_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+
+    {"type": "ZKReaderTask","id": "zkrwriterRMQT2","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQT2\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.temperature.temperature2_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"temperature\", \"Json_varname\": \"temperature2_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterT2","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerT2\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"temperature2_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriterRMQH2","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQH2\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.humidity.humidity2_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"humidity\", \"Json_varname\": \"humidity2_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterH2","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerH2\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"humidity2_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+
+    {"type": "ZKReaderTask","id": "zkrwriterRMQT3","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQT3\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.temperature.temperature3_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"temperature\", \"Json_varname\": \"temperature3_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterT3","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerT3\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"temperature3_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriterRMQH3","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQH3\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.humidity.humidity3_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"humidity\", \"Json_varname\": \"humidity3_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterH3","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerH3\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"humidity3_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriterRMQT4","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQT4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.temperature.temperature4_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"temperature\", \"Json_varname\": \"temperature4_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterT4","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerT4\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"temperature4_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+
+    {"type": "ZKReaderTask","id": "zkrwriterRMQH4","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQH4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.humidity.humidity4_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"humidity\", \"Json_varname\": \"humidity4_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterH4","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerH4\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"humidity4_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriterRMQT9","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQT9\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.temperature.outdoortemperature1_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"temperature\", \"Json_varname\": \"outdoortemperature1_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterT9","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerT9\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"outdoortemperature1_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+
+    {"type": "ZKReaderTask","id": "zkrwriterRMQH9","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerRMQH9\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.humidity.outdoorhumidity1_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"humidity\", \"Json_varname\": \"outdoorhumidity1_313\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriterH9","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerH4\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"outdoorhumidity1_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    { "type": "LoggerTask", "id": "logTemp1", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/temperature1_313.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logHumi1", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/humidity1_313.log", "quiet": true, "rotation_time": 86400 },
+    
+    { "type": "LoggerTask", "id": "logTemp2", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/temperature2_313.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logHumi2", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/humidity2_313.log", "quiet": true, "rotation_time": 86400 },
+    
+    { "type": "LoggerTask", "id": "logTemp3", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/temperature3_313.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logHumi3", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/humidity3_313.log", "quiet": true, "rotation_time": 86400 },
+    
+    { "type": "LoggerTask", "id": "logTemp4", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/temperature4_313.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logHumi4", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/humidity4_313.log", "quiet": true, "rotation_time": 86400 },
+    
+    { "type": "LoggerTask", "id": "logTemp9", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/outdoortemperature1_313.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logHumi9", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/outdoorhumidity1_313.log", "quiet": true, "rotation_time": 86400 }
+    
+   ],
+        "connections": [
+  {"type": "Connection", "sourceTask": "zkreader1", "sourcePort": 0, "destTask": "splitter1", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "zkrwriterRMQT1", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "zkrwriterT1", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter1", "sourcePort": 1, "destTask": "zkrwriterH1", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter1", "sourcePort": 1, "destTask": "zkrwriterRMQH1", "destPort": 0},
+
+  {"type": "Connection", "sourceTask": "zkreader2", "sourcePort": 0, "destTask": "splitter2", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "zkrwriterRMQT2", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "zkrwriterT2", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter2", "sourcePort": 1, "destTask": "zkrwriterH2", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter2", "sourcePort": 1, "destTask": "zkrwriterRMQH2", "destPort": 0},
+
+  {"type": "Connection", "sourceTask": "zkreader3", "sourcePort": 0, "destTask": "splitter3", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter3", "sourcePort": 0, "destTask": "zkrwriterRMQT3", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter3", "sourcePort": 0, "destTask": "zkrwriterT3", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter3", "sourcePort": 1, "destTask": "zkrwriterH3", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter3", "sourcePort": 1, "destTask": "zkrwriterRMQH3", "destPort": 0},
+
+  {"type": "Connection", "sourceTask": "zkreader4", "sourcePort": 0, "destTask": "splitter4", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter4", "sourcePort": 0, "destTask": "zkrwriterRMQT4", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter4", "sourcePort": 0, "destTask": "zkrwriterT4", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter4", "sourcePort": 1, "destTask": "zkrwriterH4", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter4", "sourcePort": 1, "destTask": "zkrwriterRMQH4", "destPort": 0},
+
+  {"type": "Connection", "sourceTask": "zkreader9", "sourcePort": 0, "destTask": "splitter9", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter9", "sourcePort": 0, "destTask": "zkrwriterRMQT9", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter9", "sourcePort": 0, "destTask": "zkrwriterT9", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter9", "sourcePort": 1, "destTask": "zkrwriterH9", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter9", "sourcePort": 1, "destTask": "zkrwriterRMQH9", "destPort": 0},
+  
+  {"type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "logTemp1", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter1", "sourcePort": 1, "destTask": "logHumi1", "destPort": 0},
+  
+  {"type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "logTemp2", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter2", "sourcePort": 1, "destTask": "logHumi2", "destPort": 0},
+  
+  {"type": "Connection", "sourceTask": "splitter3", "sourcePort": 0, "destTask": "logTemp3", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter3", "sourcePort": 1, "destTask": "logHumi3", "destPort": 0},
+  
+  {"type": "Connection", "sourceTask": "splitter4", "sourcePort": 0, "destTask": "logTemp4", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter4", "sourcePort": 1, "destTask": "logHumi4", "destPort": 0},
+  
+  {"type": "Connection", "sourceTask": "splitter9", "sourcePort": 0, "destTask": "logTemp9", "destPort": 0},
+  {"type": "Connection", "sourceTask": "splitter9", "sourcePort": 1, "destTask": "logHumi9", "destPort": 0}
+  
+  ]
+}

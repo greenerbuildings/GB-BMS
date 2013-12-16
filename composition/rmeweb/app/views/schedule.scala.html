@@ -1,0 +1,66 @@
+@(rules: List[org.rugco.crc.JsScheduledRuleParsed], scheduleForm: Form[org.rugco.crc.JsScheduledRule], jsonFileForm: Form[WebJsonFile], strError:String)
+
+@import helper._
+
+@main("Schedule") {
+    @if(rules.size != 0) {
+        <h2>@rules.size Scheduled rule(s)</h2>
+
+        <ul>
+            @for(rule <- rules) {
+            <li>
+                @form(routes.ApplSchedule.deleteRule(rule.rule.rid)) {
+                <span class="vrinfo">@rule.rule.strrule</span>
+                <input type="submit" value="Delete">
+                <ul>
+                    <li><span class="ruleinfo">Start: @rule.start</span></li>
+                    <li><span class="ruleinfo">Finish: @rule.finish</span></li>
+                    <li><span class="ruleinfo">CNF: @rule.rule.cnfForm</span></li>
+                    <li><span class="ruleinfo">Controlling rules:</span>
+                        <ul>
+                            @for(rmerule <- rule.rule.splitRules) {
+                                <li><span class="ruleinfo">@rmerule</span></li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
+                }
+            </li>
+            }
+        </ul>
+    }
+
+    <div>
+        <h3>Schedule JSON file:</h3>
+        @form(routes.ApplSchedule.jsonSaveOrLoad, args = 'id -> "jsonFileForm") {
+        @inputText(
+            field = jsonFileForm("filename"),
+            args = '_label -> "File name", 'placeholder -> "schedule.json", '_showConstraints -> false
+        )
+        <input type="submit" name="btnSave" value="Save">
+        <input type="submit" name="btnLoad" value="Load">
+        }
+    </div>
+
+    <h2>Add a new rule:</h2>
+    @form(action = routes.ApplSchedule.newRule, args = 'id -> "scheduleForm") {
+        @inputText(
+        field = scheduleForm("strRule"), args = '_label -> "Rule", 'placeholder -> "", '_showConstraints -> false, 'size -> 70
+        )
+
+        @inputText(
+        field = scheduleForm("start"), args = '_label -> "Start time (formatted as '10:18:27 31/12/2012')", 'placeholder -> "", '_showConstraints -> false, 'size -> 30
+        )
+
+        @inputText(
+        field = scheduleForm("finish"), args = '_label -> "Finish time (formatted as '10:18:27 31/12/2012')", 'placeholder -> "", '_showConstraints -> false, 'size -> 30
+        )
+
+<input type="submit" value="Add">
+    }
+    @if(!strError.isEmpty) {
+        <span class="genErrorText">
+            Cannot parse rule. Reason: @strError
+        </span>
+    }
+}

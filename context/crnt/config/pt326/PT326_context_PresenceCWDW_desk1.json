@@ -1,0 +1,187 @@
+{
+  "tasks": [
+    { "type": "ZKReaderTask","id": "zkrPirOverHead","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,0],\"readTimestamp\": false  }}",
+      "path":"/gb/sagw/potentiaal/floor3/room326/desk1/presence/piroverhead1_326"    },
+    { "type": "SelectiveSplitterTask", "id": "pirOverHead", "chSelection": [[3]] },
+    
+    { "type": "TCPReader", "id": "screenStatus" , "decoder": {   "type": "ASCIIDecoder", "format":[0], "readTimestamp": true },   "host":"localhost",   "port": 5003 },
+    { "type": "TCPReader", "id": "distnaceRight", "decoder": {   "type": "ASCIIDecoder", "format":[0], "readTimestamp": true },   "host":"localhost",   "port": 5000 },
+    { "type": "TCPReader", "id": "distnaceLeft" , "decoder": {   "type": "ASCIIDecoder", "format":[0], "readTimestamp": true },   "host":"localhost",   "port": 5001 },
+
+    //Detection of Chair
+    { "type": "FilterTask", "id": "rightVarChair", "filterPlugin": {"type": "VarFilter" , "windowSize": 10 } },
+    { "type": "FilterTask", "id": "leftVarChair" , "filterPlugin": {"type": "VarFilter" , "windowSize": 10 } },
+    { "type": "FilterTask", "id": "thNotRightVarChair"   , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 1000  }, "low": { "type": "IntValue", "val": 5 }, "out0": 1, "out1": 0, "out2": 0 } },
+    { "type": "FilterTask", "id": "thNotLeftVarChair"    , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 1000  }, "low": { "type": "IntValue", "val": 5 }, "out0": 1, "out1": 0, "out2": 0 } },
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "NotChair",  "mathOpPlugin": { "type": "And" } },
+    
+    //Detection of Person
+    { "type": "FilterTask", "id": "rightVarPerson", "filterPlugin": {"type": "VarFilter" , "windowSize": 4 } },
+    { "type": "FilterTask", "id": "leftVarPerson" , "filterPlugin": {"type": "VarFilter" , "windowSize": 4 } },
+    { "type": "FilterTask", "id": "thRightVarPerson"   , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 1600  }, "low": { "type": "IntValue", "val": 2 }, "out0": 1, "out1": 0, "out2": 0 } },
+    { "type": "FilterTask", "id": "thLeftVarPerson"    , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 1600  }, "low": { "type": "IntValue", "val": 2 }, "out0": 1, "out1": 0, "out2": 0 } },
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "personVars",  "mathOpPlugin": { "type": "Or" } },
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "person",  "mathOpPlugin": { "type": "And" } },
+    
+    //Conmpute PersonLocation
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "location",  "mathOpPlugin": { "type": "Difference" } },
+    { "type": "FilterTask", "id": "locationCW"   , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 20  }, "low": { "type": "IntValue", "val": -20 }, "out0": 1, "out1": 0, "out2": 0 } },
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "locationDW",  "mathOpPlugin": { "type": "Not" }, "numOperands": 1  },
+    
+    // Compute CW and DW
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "deskWork"    ,  "mathOpPlugin": { "type": "And" } },
+    
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "preComputerWork",  "mathOpPlugin": { "type": "And" } },
+    { "type": "FilterTask", "id": "computerWork", "filterPlugin": { "type": "EdgeDelayer", "delay": 2.0 } },
+    
+    {"type": "FilterAdapterTask", "id": "delayAdapter",  "filterAdapterPlugins": [
+         {"type": "LinearRLBExtender", "id": "delayAdapterPlugin", "controlThreshold": 0.5, "feedbackThreshold": 0.1, "parameterUpperBound": 60.0, "parameterLowerBound": 0, "paramStep": 0.01, "observationWindow": 2.5, "parameterStartValue": 2.0 }
+       ], "parameterList": ["delay"], "filterPluginName": "EdgeDelayer"  },
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "feedBack",  "mathOpPlugin": { "type": "Or" } },
+
+    //Compute user Motion 
+    { "type": "FilterTask", "id": "usrRightMovement", "filterPlugin": { "type": "DifferenceFilter" } },
+    { "type": "FilterTask", "id": "usrLeftMovement" , "filterPlugin": { "type": "DifferenceFilter" } },
+    { "type": "FilterTask", "id": "movementRight"   , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 15  }, "low": { "type": "IntValue", "val": -15 }, "out0": 0, "out1": 1, "out2": 1 } },
+    { "type": "FilterTask", "id": "movementLeft"    , "filterPlugin": { "type": "ThresholdFilter", "high": {"type": "IntValue", "val": 15  }, "low": { "type": "IntValue", "val": -15 }, "out0": 0, "out1": 1, "out2": 1 } },
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "movement",  "mathOpPlugin": { "type": "Difference" } },
+    
+    // presece
+    { "type": "SimpleMathTask", "waitForAllOperands": false,  "id": "presence",  "mathOpPlugin": { "type": "Or" }, "numOperands": 2 },
+    { "type": "TCPWriter", "id": "tcpwPresence", "tcpNoDelay": true, "encoder": { "type": "TimestampedLinesEncoder" }, "port":5006 },
+    
+    { "type": "ChangeDetector", "id": "chDetPresence" },
+    { "type": "ChangeDetector", "id": "chDetCW" },
+    { "type": "ChangeDetector", "id": "chDetDW" },
+    
+    {"type": "ZKReaderTask","id": "zkrRmqPirOverHead","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{\"type\": \"RabbitMQWriter\", \"id\": \"rmqPirOverHead\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk1.presence.piroverhead1_326\", \"QueueName\": \"q2\",       \"Json_type\": \"update\", \"Json_siname\": \"presence\",       \"Json_varname\": \"piroverhead1_326\", \"varstateType\": 2     }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassPirOverHead","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"cassPirOverHead\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"piroverhead1_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\"     }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },    
+        
+    {"type": "ZKReaderTask","id": "zkrRmqPresence","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk1.presence.presence1_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"presence\", \"Json_varname\": \"presence1_326\", \"varstateType\": 2 }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassPresence","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"presence1_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+    
+    {"type": "ZKReaderTask","id": "zkrRmqCW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writerCW1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk1.computerwork.computerwork1_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"computerwork\", \"Json_varname\": \"computerwork1_326\", \"varstateType\": 2 }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassCW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writerCW11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"computerwork1_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+    
+    
+    {"type": "ZKReaderTask","id": "zkrRmqDW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{ \"type\": \"RabbitMQWriter\", \"id\": \"writerDW1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk1.deskwork.deskwork1_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"deskwork\", \"Json_varname\": \"deskwork1_326\", \"varstateType\": 2 }",
+      "path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrCassDW","zk_hosts":"129.125.84.113:2181",
+      "surrugate_task":"{\"type\": \"CassandraWriter\", \"id\": \"writerDW11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"deskwork1_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }",
+      "path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+    
+    { "type": "SimpleMerger", "id": "merger", "inports": 14, "syncToInPort0": false },
+    { "type": "LoggerTask", "id": "logger", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/tmp/USR_PT326D1.log", "quiet": true, "rotation_time": 86400 },
+    
+    { "type": "LoggerTask", "id": "logPresence", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/presence1_326.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logComputerWork", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/computerwork1_326.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logDeskWork", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/deskwork1_326.log", "quiet": true, "rotation_time": 86400}
+              
+  ],
+  "connections": [
+    
+    //Connetc logger
+    { "type": "Connection", "sourceTask": "distnaceRight"  , "sourcePort": 0, "destTask": "merger" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "distnaceLeft"   , "sourcePort": 0, "destTask": "merger" , "destPort": 1 },
+    { "type": "Connection", "sourceTask": "location"       , "sourcePort": 0, "destTask": "merger" , "destPort": 2 },
+    { "type": "Connection", "sourceTask": "locationCW"     , "sourcePort": 0, "destTask": "merger" , "destPort": 3 },
+    { "type": "Connection", "sourceTask": "locationDW"     , "sourcePort": 0, "destTask": "merger" , "destPort": 4 },
+    { "type": "Connection", "sourceTask": "rightVarPerson" , "sourcePort": 0, "destTask": "merger" , "destPort": 5 },
+    { "type": "Connection", "sourceTask": "leftVarPerson"  , "sourcePort": 0, "destTask": "merger" , "destPort": 6 },
+    { "type": "Connection", "sourceTask": "personVars"     , "sourcePort": 0, "destTask": "merger" , "destPort": 7 },
+    { "type": "Connection", "sourceTask": "person"         , "sourcePort": 0, "destTask": "merger" , "destPort": 8 },
+    { "type": "Connection", "sourceTask": "rightVarChair"  , "sourcePort": 0, "destTask": "merger" , "destPort": 9 },
+    { "type": "Connection", "sourceTask": "leftVarChair"   , "sourcePort": 0, "destTask": "merger" , "destPort": 10},
+    { "type": "Connection", "sourceTask": "NotChair"       , "sourcePort": 0, "destTask": "merger" , "destPort": 11},
+    { "type": "Connection", "sourceTask": "preComputerWork", "sourcePort": 0, "destTask": "merger" , "destPort": 12},
+    { "type": "Connection", "sourceTask": "deskWork"       , "sourcePort": 0, "destTask": "merger" , "destPort": 13},
+    { "type": "Connection", "sourceTask": "merger"         , "sourcePort": 0, "destTask": "logger" , "destPort": 0 },
+    
+   //Connect chair
+    
+    { "type": "Connection", "sourceTask": "distnaceRight"      , "sourcePort": 0, "destTask": "rightVarChair"     , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "distnaceLeft"       , "sourcePort": 0, "destTask": "leftVarChair"      , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "rightVarChair"      , "sourcePort": 0, "destTask": "thNotRightVarChair", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "leftVarChair"       , "sourcePort": 0, "destTask": "thNotLeftVarChair" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thNotRightVarChair" , "sourcePort": 0, "destTask": "NotChair"          , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thNotLeftVarChair"  , "sourcePort": 0, "destTask": "NotChair"          , "destPort": 1 },
+    
+    
+    
+    //Connect Person
+    { "type": "Connection", "sourceTask": "distnaceRight"   , "sourcePort": 0, "destTask": "rightVarPerson"  , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "distnaceLeft"    , "sourcePort": 0, "destTask": "leftVarPerson"   , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "rightVarPerson"  , "sourcePort": 0, "destTask": "thRightVarPerson", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "leftVarPerson"   , "sourcePort": 0, "destTask": "thLeftVarPerson" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thRightVarPerson", "sourcePort": 0, "destTask": "personVars"      , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thLeftVarPerson" , "sourcePort": 0, "destTask": "personVars"      , "destPort": 1 },
+    { "type": "Connection", "sourceTask": "personVars"      , "sourcePort": 0, "destTask": "person"          , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "NotChair"        , "sourcePort": 0, "destTask": "person"          , "destPort": 1 },
+
+    //Connect Location
+    { "type": "Connection", "sourceTask": "distnaceRight" , "sourcePort": 0, "destTask": "location"  , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "distnaceLeft"  , "sourcePort": 0, "destTask": "location"  , "destPort": 1 },
+    { "type": "Connection", "sourceTask": "location"      , "sourcePort": 0, "destTask": "locationCW", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "locationCW"      , "sourcePort": 0, "destTask": "locationDW", "destPort": 0 },
+   
+    //Connect CW
+    { "type": "Connection", "sourceTask": "locationCW", "sourcePort": 0, "destTask": "preComputerWork", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "person"    , "sourcePort": 0, "destTask": "preComputerWork", "destPort": 1 },
+    { "type": "Connection", "sourceTask": "preComputerWork", "sourcePort": 0, "destTask": "computerWork", "destPort": 0 },
+    
+    //Connect DW
+    { "type": "Connection", "sourceTask": "locationDW", "sourcePort": 0, "destTask": "deskWork", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "person"    , "sourcePort": 0, "destTask": "deskWork", "destPort": 1 },
+
+    //Connect Movement
+    { "type": "Connection", "sourceTask": "distnaceRight"     , "sourcePort": 0, "destTask": "usrRightMovement"  , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "distnaceLeft"      , "sourcePort": 0, "destTask": "usrLeftMovement"   , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "usrRightMovement"  , "sourcePort": 0, "destTask": "movementRight"     , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "usrLeftMovement"   , "sourcePort": 0, "destTask": "movementLeft"      , "destPort": 0 },
+
+    //Connect AdaptermovementOr
+    { "type": "Connection", "sourceTask": "movementLeft"      , "sourcePort": 0, "destTask": "feedBack"          , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "movementRight"     , "sourcePort": 0, "destTask": "feedBack"          , "destPort": 1 },
+    { "type": "Connection", "sourceTask": "computerWork"       , "sourcePort": 0, "destTask": "delayAdapter"      , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "feedBack"          , "sourcePort": 0, "destTask": "delayAdapter"      , "destPort": 1 },
+    { "type": "Connection", "sourceTask": "delayAdapter"      , "sourcePort": 0, "destTask": "computerWork"       , "destPort": 1 },  
+    
+    { "type": "Connection", "sourceTask": "zkrPirOverHead"    , "sourcePort": 0, "destTask": "pirOverHead", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "person"      , "sourcePort": 0, "destTask": "presence", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "screenStatus", "sourcePort": 0, "destTask": "presence", "destPort": 1 },
+    
+    { "type": "Connection", "sourceTask": "presence"     , "sourcePort": 0, "destTask": "chDetPresence", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "computerWork" , "sourcePort": 0, "destTask": "chDetCW", "destPort": 0 },  
+    { "type": "Connection", "sourceTask": "deskWork"     , "sourcePort": 0, "destTask": "chDetDW", "destPort": 0 },
+    
+    
+    { "type": "Connection", "sourceTask": "pirOverHead"  , "sourcePort": 0, "destTask": "zkrRmqPirOverHead" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "pirOverHead"  , "sourcePort": 0, "destTask": "zkrCassPirOverHead", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "zkrRmqPresence" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "zkrCassPresence", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetCW"      , "sourcePort": 0, "destTask": "zkrRmqCW"       , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetCW"      , "sourcePort": 0, "destTask": "zkrCassCW"      , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetDW"      , "sourcePort": 0, "destTask": "zkrRmqDW"       , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetDW"      , "sourcePort": 0, "destTask": "zkrCassDW"      , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "presence"     , "sourcePort": 0, "destTask": "tcpwPresence"   , "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chDetPresence", "sourcePort": 0, "destTask": "logPresence"     , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetCW"      , "sourcePort": 0, "destTask": "logComputerWork" , "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chDetDW"      , "sourcePort": 0, "destTask": "logDeskWork"     , "destPort": 0 }
+  ]
+}

@@ -1,0 +1,32 @@
+Index: PT326_context_PresenceCWDW_desk1.json
+===================================================================
+--- PT326_context_PresenceCWDW_desk1.json	(revision 132)
++++ PT326_context_PresenceCWDW_desk1.json	(working copy)
+@@ -73,10 +73,10 @@
+ 			"id": "thfilter1",
+ 			"filterPlugin": {
+ 				"type": "ThresholdFilter",
+-				"high": { "type": "IntValue", "val": 1000 },
+-				"low": { "type": "IntValue", "val": 10 },
++				"high": { "type": "IntValue", "val": 120 },
++				"low": { "type": "IntValue", "val": 20 },
+ 				"out0": 1,
+-				"out1": 99,
++				"out1": 0,
+ 				"out2": 0
+ 			}
+ 		},
+@@ -86,10 +86,10 @@
+ 			"id": "thfilter2",
+ 			"filterPlugin": {
+ 				"type": "ThresholdFilter",
+-				"high": { "type": "IntValue", "val": 1000 },
+-				"low": { "type": "IntValue", "val": 10 },
++				"high": { "type": "IntValue", "val": 120 },
++				"low": { "type": "IntValue", "val": 20 },
+ 				"out0": 1,
+-				"out1": 99,
++				"out1": 0,
+ 				"out2": 0
+ 			}
+ 		},

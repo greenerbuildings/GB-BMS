@@ -1,0 +1,96 @@
+Index: PT326_context_PresenceCWDW_desk1.json
+===================================================================
+--- PT326_context_PresenceCWDW_desk1.json	(revision 132)
++++ PT326_context_PresenceCWDW_desk1.json	(working copy)
+@@ -1,6 +1,6 @@
+ {
+         "tasks": [
+-		{ "type": "ZKReaderTask","id": "zkreader1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,0],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/desk1/presence/presence1_326"    },
++		{ "type": "ZKReaderTask","id": "zkreader1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,2,0],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/desk1/presence/piroverhead1_326"    },
+ 		
+ 		{
+ 			"type": "TCPReader",		
+@@ -73,10 +73,10 @@
+ 			"id": "thfilter1",
+ 			"filterPlugin": {
+ 				"type": "ThresholdFilter",
+-				"high": { "type": "IntValue", "val": 1000 },
+-				"low": { "type": "IntValue", "val": 10 },
++				"high": { "type": "IntValue", "val": 120 },
++				"low": { "type": "IntValue", "val": 20 },
+ 				"out0": 1,
+-				"out1": 99,
++				"out1": 0,
+ 				"out2": 0
+ 			}
+ 		},
+@@ -86,10 +86,10 @@
+ 			"id": "thfilter2",
+ 			"filterPlugin": {
+ 				"type": "ThresholdFilter",
+-				"high": { "type": "IntValue", "val": 1000 },
+-				"low": { "type": "IntValue", "val": 10 },
++				"high": { "type": "IntValue", "val": 120 },
++				"low": { "type": "IntValue", "val": 20 },
+ 				"out0": 1,
+-				"out1": 99,
++				"out1": 0,
+ 				"out2": 0
+ 			}
+ 		},
+@@ -135,7 +135,33 @@
+ 			\"sendBool\": true,		
+ 			\"columnname\": \"updatedvalue\"		
+ 		}","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
+-		{
++		{"type": "ZKReaderTask","id": "zkrRMQPirOverHead","zk_hosts":"129.125.84.113:2181","surrugate_task":
++		"{
++			\"type\": \"RabbitMQWriter\",		
++			\"id\": \"writer1\",		
++			\"host\": \"localhost\",		
++			\"port\": 5672,		
++			\"ExchangeName\": \"E2\",		
++			\"ExchangeType\": \"topic\",		
++			\"RoutingKey\": \"potentiaal.floor3.room326.desk1.presence.piroverhead1_326\",		
++			\"QueueName\": \"q2\",			
++			\"Json_type\": \"update\",
++			\"Json_siname\": \"presence\",			
++			\"Json_varname\": \"piroverhead1_326\",
++			\"varstateType\": 2		
++		}","path":"/gb/system/rabbitmq"},
++		{"type": "ZKReaderTask","id": "zkrRepPirOverHead","zk_hosts":"129.125.84.113:2181","surrugate_task":"{
++			\"type\": \"CassandraWriter\",		
++			\"id\": \"writer11\",		
++			\"databaseIP\": \"131.155.237.78\",		
++			\"databasePort\": 9160,		
++			\"keysp\": \"gbrepository\",		
++			\"columnfam\": \"variables\",		
++			\"rowk\": \"piroverhead1_326\",		
++			\"sendBool\": true,		
++			\"columnname\": \"updatedvalue\"		
++		}","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}"  },
++	{
+ 			"type": "EventMerger",		
+ 			"id": "merger2",		
+ 			"inports": 2,		
+@@ -302,6 +328,20 @@
+ 		},
+ 		{
+ 			"type": "Connection",
++			"sourceTask": "splitter1",
++			"sourcePort": 0,
++			"destTask": "zkrRMQPirOverHead",
++			"destPort": 0
++		},
++		{
++			"type": "Connection",
++			"sourceTask": "splitter1",
++			"sourcePort": 0,
++			"destTask": "zkrRepPirOverHead",
++			"destPort": 0
++		},
++		{
++			"type": "Connection",
+ 			"sourceTask": "tcpreader1",
+ 			"sourcePort": 0,
+ 			"destTask": "splitter2",

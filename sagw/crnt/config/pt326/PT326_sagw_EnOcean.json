@@ -1,0 +1,522 @@
+{
+ "tasks": [
+  {"type": "ZKWriterTask","port":9029,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/window/window1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9030,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/window/window2_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9028,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/door/door1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9006,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/presence/piroverhead1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9013,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk2/presence/piroverhead2_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9020,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk3/presence/piroverhead3_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9027,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/presence/piroverhead4_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9005,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk1/light/luxlevel1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9012,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk2/light/luxlevel2_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9019,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk3/light/luxlevel3_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9026,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/desk4/light/luxlevel4_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9031,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/luxlevelout1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9034,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/lightpowerconsumption1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9035,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/lightpowerconsumption2_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9062,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/statuslights1_326","host": "localhost","protocol": "REST"},
+  {"type": "ZKWriterTask","port":9063,"zk_hosts":"129.125.84.113:2181","root": "/gb/sagw","name":"potentiaal/floor3/room326/room/light/statuslights2_326","host": "localhost","protocol": "REST"},  
+
+
+  {
+   "type": "EnOceanreader",
+   "id": "reader",
+   "devname": "/dev/gb/Enocean",
+
+   "devlist": [ [ 8439610, 16928523, 16911320 ],
+                [ 8628182, 8624220 ], 
+                [ 348756, 348631 ], 
+                [ 16801061, 16805516, 16805536, 16800498, 8619613 ],
+		[ 4288773249, 4289886977 ],
+		[ 4288773248, 4289886976 ]
+              ],
+   "devtype": [ "FTK", "FBH63", "SR-MDS", "FIH63", "FSR61VA", "FT4F"  ]
+  },
+  {
+   "type": "LoggerTask",
+   "id": "logger1",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/window1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter1",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9029,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger2",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/window2_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter2",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9030,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger3",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/door1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter3",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9028,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger4",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/piroverhead1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter4",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9006,
+      "tcpNoDelay":true  
+      
+   },
+   
+  {
+   "type": "LoggerTask",
+   "id": "logger5",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/piroverhead2_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter5",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9013,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger6",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/piroverhead3_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter6",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9020,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger7",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/piroverhead4_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter7",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9027,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger8",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/luxlevel1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter8",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9005,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger9",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/luxlevel2_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter9",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9012,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger10",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/luxlevel3_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter10",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9019,
+      "tcpNoDelay":true  
+      
+   },
+  {
+   "type": "LoggerTask",
+   "id": "logger11",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/luxlevel4_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter11",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9026,
+      "tcpNoDelay":true  
+      
+   },
+   {
+   "type": "LoggerTask",
+   "id": "logger12",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/luxlevelout1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter12",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9031,
+      "tcpNoDelay":true  
+      
+   },
+   {
+   "type": "LoggerTask",
+   "id": "logger13",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/lightpowerconsumption1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter13",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9034,
+      "tcpNoDelay":true  
+      
+   },
+   {
+   "type": "LoggerTask",
+   "id": "logger14",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/lightpowerconsumption2_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter14",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9035,
+      "tcpNoDelay":true  
+      
+   },
+   {
+   "type": "LoggerTask",
+   "id": "logger15",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/statuslights1_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter15",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9062,
+      "tcpNoDelay":true  
+      
+   },
+   {
+   "type": "LoggerTask",
+   "id": "logger16",
+   "name": "/home/actlab/crnt_cmake/PT326_DEMO/statuslights2_326.log",
+   "encoder": { "type": "TimestampedLinesEncoder" },
+   "quiet": false,
+   "rotation_time": 86400
+  },
+  {
+        "type": "TCPWriter",
+        "id": "tcpwriter16",  
+      "encoder": { "type": "TimestampedLinesEncoder" },  
+      "port": 9063,
+      "tcpNoDelay":true  
+      
+   }
+  
+ ],
+
+ "connections": [
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 0,
+   "destTask": "logger1",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 0,
+   "destTask": "tcpwriter1",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 1,
+   "destTask": "logger2",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 1,
+   "destTask": "tcpwriter2",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 2,
+   "destTask": "logger3",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 2,
+   "destTask": "tcpwriter3",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 3,
+   "destTask": "logger4",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 3,
+   "destTask": "tcpwriter4",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 4,
+   "destTask": "logger5",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 4,
+   "destTask": "tcpwriter5",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 5,
+   "destTask": "logger6",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 5,
+   "destTask": "tcpwriter6",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 6,
+   "destTask": "logger7",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 6,
+   "destTask": "tcpwriter7",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 7,
+   "destTask": "logger8",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 7,
+   "destTask": "tcpwriter8",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 8,
+   "destTask": "logger9",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 8,
+   "destTask": "tcpwriter9",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 9,
+   "destTask": "logger10",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 9,
+   "destTask": "tcpwriter10",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 10,
+   "destTask": "logger11",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 10,
+   "destTask": "tcpwriter11",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 11,
+   "destTask": "logger12",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 11,
+   "destTask": "tcpwriter12",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 12,
+   "destTask": "logger13",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 12,
+   "destTask": "tcpwriter13",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 13,
+   "destTask": "logger14",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 13,
+   "destTask": "tcpwriter14",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 14,
+   "destTask": "logger15",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 14,
+   "destTask": "tcpwriter15",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 15,
+   "destTask": "logger16",
+   "destPort": 0
+  },
+  {
+   "type": "Connection",
+   "sourceTask": "reader",
+   "sourcePort": 15,
+   "destTask": "tcpwriter16",
+   "destPort": 0
+  }
+  
+ ]
+}

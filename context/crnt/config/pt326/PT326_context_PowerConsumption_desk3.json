@@ -1,0 +1,88 @@
+{
+  "tasks": [
+    { "type": "ZKReaderTask","id": "zkreader1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,3,2],\"readTimestamp\": false }}","path":"/gb/sagw/potentiaal/floor3/room326/desk3/powerconsumption/powerconsumption7_326"    },
+    { "type": "ZKReaderTask","id": "zkreader2","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,3,2],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/desk3/powerconsumption/powerconsumption8_326"    },
+    { "type": "ZKReaderTask","id": "zkreader3","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,3,2],\"readTimestamp\": false  }}","path":"/gb/sagw/potentiaal/floor3/room326/desk3/powerconsumption/powerconsumption9_326"    },
+
+    { "type": "SelectiveSplitterTask", "id": "splitter1", "chSelection": [[3]] },
+    { "type": "SelectiveSplitterTask", "id": "splitter2", "chSelection": [[3]] },
+    { "type": "SelectiveSplitterTask", "id": "splitter3", "chSelection": [[3]] },
+    
+    { "type": "FilterTask", "id": "thfilter1", "filterPlugin": { "type": "ThresholdFilter", "high": { "type": "IntValue", "val": 1000 }, "low": { "type": "IntValue", "val": 3 }, "out0": 1, "out1": 1, "out2": 0 } },
+    { "type": "FilterTask", "id": "thfilter2", "filterPlugin": { "type": "ThresholdFilter", "high": { "type": "IntValue", "val": 1000 }, "low": { "type": "IntValue", "val": 3 }, "out0": 1, "out1": 1, "out2": 0 } },
+    { "type": "FilterTask", "id": "thfilter3", "filterPlugin": { "type": "ThresholdFilter", "high": { "type": "IntValue", "val": 1000 }, "low": { "type": "IntValue", "val": 3 }, "out0": 1, "out1": 1, "out2": 0 } },
+    
+    { "type": "TCPWriter", "id": "tcpwriter2", "tcpNoDelay": true, "encoder": { "type": "TimestampedLinesEncoder" }, "port":5017 },
+    
+    { "type": "ChangeDetector", "id": "chdetector1" },
+    { "type": "ChangeDetector", "id": "chdetector2" },
+    { "type": "ChangeDetector", "id": "chdetector3" },
+    { "type": "ChangeDetector", "id": "chdetector4" },
+    { "type": "ChangeDetector", "id": "chdetector5" },
+    { "type": "ChangeDetector", "id": "chdetector6" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriter1","zk_hosts":"129.125.84.113:2181", "surrugate_task": "{ \"type\": \"RabbitMQWriter\",  \"id\": \"writer1\",  \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.powerconsumption.powerconsumption7_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"powerconsumption\", \"Json_varname\": \"powerconsumption7_326\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter11","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"CassandraWriter\", \"id\": \"writer11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"powerconsumption7_326\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+
+    {"type": "ZKReaderTask","id": "zkrwriter1s","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer1s\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.computer.statuscomputer3_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"computer\", \"Json_varname\": \"statuscomputer3_326\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter11s","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer11s\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"statuscomputer3_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+
+    {"type": "ZKReaderTask","id": "zkrwriter2","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer2\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.powerconsumption.powerconsumption8_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"powerconsumption\", \"Json_varname\": \"powerconsumption8_326\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter21","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer21\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"powerconsumption8_326\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+
+    {"type": "ZKReaderTask","id": "zkrwriter2s","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer2s\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.screen.statusscreen3_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"screen\", \"Json_varname\": \"statusscreen3_326\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter21s","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer21s\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"statusscreen3_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriter3","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer3\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.powerconsumption.powerconsumption9_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"powerconsumption\", \"Json_varname\": \"powerconsumption9_326\", \"varstateType\": 1 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter31","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer31\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"powerconsumption9_326\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriter3s","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer3s\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room326.desk3.lamp.statuslamp3_326\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"lamp\", \"Json_varname\": \"statuslamp3_326\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter31s","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer31s\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"statuslamp3_326\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    { "type": "LoggerTask", "id": "logStatusComputer", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/statuscomputer3_326.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logStatusScreen", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/statusscreen3_326.log", "quiet": true, "rotation_time": 86400 },
+    { "type": "LoggerTask", "id": "logStatusLamp", "encoder": {"type": "TimestampedLinesEncoder" }, "name": "/home/actlab/crnt/data/gb_data/statuslamp3_326.log", "quiet": true, "rotation_time": 86400 }
+               
+  ],
+  "connections": [
+               
+    { "type": "Connection", "sourceTask": "zkreader1", "sourcePort": 0, "destTask": "splitter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "chdetector1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrwriter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector1", "sourcePort": 0, "destTask": "zkrwriter11", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "thfilter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thfilter1", "sourcePort": 0, "destTask": "chdetector2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector2", "sourcePort": 0, "destTask": "zkrwriter1s", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector2", "sourcePort": 0, "destTask": "zkrwriter11s", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "zkreader2", "sourcePort": 0, "destTask": "splitter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "chdetector3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector3", "sourcePort": 0, "destTask": "zkrwriter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector3", "sourcePort": 0, "destTask": "zkrwriter21", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "thfilter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thfilter2", "sourcePort": 0, "destTask": "chdetector4", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector4", "sourcePort": 0, "destTask": "zkrwriter2s", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector4", "sourcePort": 0, "destTask": "zkrwriter21s", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "thfilter2", "sourcePort": 0, "destTask": "tcpwriter2", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "zkreader3", "sourcePort": 0, "destTask": "splitter3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter3", "sourcePort": 0, "destTask": "chdetector5", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector5", "sourcePort": 0, "destTask": "zkrwriter3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector5", "sourcePort": 0, "destTask": "zkrwriter31", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "splitter3", "sourcePort": 0, "destTask": "thfilter3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "thfilter3", "sourcePort": 0, "destTask": "chdetector6", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector6", "sourcePort": 0, "destTask": "zkrwriter3s", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector6", "sourcePort": 0, "destTask": "zkrwriter31s", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "chdetector2", "sourcePort": 0, "destTask": "logStatusComputer", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector4", "sourcePort": 0, "destTask": "logStatusScreen", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "chdetector6", "sourcePort": 0, "destTask": "logStatusLamp", "destPort": 0 }
+    
+  ]
+}

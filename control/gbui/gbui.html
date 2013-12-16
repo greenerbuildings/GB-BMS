@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<script src="js/jquery/jquery-1.8.3.js"></script>
+		<link type="text/css" href="css/smoothness/jquery-ui-1.9.2.custom.css" rel="stylesheet" /> 
+		<link rel="stylesheet" type="text/css" href="css/galaxy.css">
+		<script type="text/javascript" src="js/jquery/jquery-ui-1.9.2.custom.min.js"></script>
+		<script src="js/jquery/jquery.ui.touch-punch.min.js"></script>
+		<script src="js/BlindsWidget.js"></script>
+		<script src="js/SocketSetterGetter.js"></script>	
+		<script src="js/tlmdemo.js"></script>		
+	</head>
+
+	<body>
+		<div class="tlm" id = "tlm-frame">
+				<img id = "gblogo" src = "images/gblogo.png"/> 
+				 <div id = "TLTitle" style="position: absolute; left:260px; top: 10px; font-family: arial; font-size: 40px;"> <img src="images/title.png"/></div>
+
+				<div id="tabs">
+					<ul>
+						<li><a href='#blinds-tab'>Daylight</a></li>
+						<li><a href='#lamps-tab'>Artificial Lights</a></li>
+						<li><a href='#temp-tab'>Thermal Comfort</a></li>
+						<li><a href='#sensor-tab'>Room Status</a></li>
+					</ul>
+					
+					<div id="blinds-tab">
+						<div id="myBlinds">
+								<div id="blindsLabel1"><img src="images/window1.png"/></div>
+								<div id="blindsLabel2"><img src="images/window2.png"/></div>
+								<div id="blindsLabel3"><img src="images/window3.png"/></div>
+								<canvas id="blindsCanvas3" width = "180" height = "360" ></canvas>
+								<canvas id="blindsCanvas1" width = "180" height = "360" ></canvas>
+								<canvas id="blindsCanvas2" width = "180" height = "360" ></canvas>
+						</div>
+					
+					</div>
+					<div id="lamps-tab">
+						<div id="mylamps">
+							<div id="lampLabel1"><img src="images/lights1.png"/></div>
+							<div id="lampLabel2"><img src="images/lights2.png"/></div>
+							<div id="lampLabel3"><img src="images/lights3.png"/></div>
+							<div id="lampLabel4"><img src="images/lights4.png"/></div>
+							<div id="lightSlider1"> </div>
+							<div id="lightSlider2"> </div>
+							<div id="lightSlider3"> </div>
+							<div id="lightSlider4"> </div>
+						</div>
+					</div>
+					<div id="temp-tab">
+
+						<div id="mytemps">
+							<div id="templabel"><img src="images/temp.png"/></div>
+							<img id="scale" src = "images/temp_scale.png"/>
+							<img id="pointer" src = "images/pointer.png"/>
+							<div id="tempSlider"> </div>
+						</div>
+					</div>
+					
+					<div id="sensor-tab">
+						<canvas id="sensorCanvas" width = "600" height = "400" style="position: absolute; left:150px; top: 100px; font-family: arial; font-size: 40px;"></canvas>
+					</div>
+					
+					<!-- <img id="leaf" src = "images/leaf0.png" style="visibility:hidden;"> -->
+				</div>
+		</div><!-- End tlm -->
+	</body>
+</html>

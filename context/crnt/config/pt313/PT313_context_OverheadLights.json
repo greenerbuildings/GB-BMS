@@ -1,0 +1,72 @@
+{
+  "tasks": [
+    { "type": "ZKReaderTask","id": "zkreader1","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0,0],\"readTimestamp\": false }}","path":"/gb/sagw/potentiaal/floor3/room313/room/light/lightpowerconsumption1_313"    },
+    { "type": "ZKReaderTask","id": "zkreader2","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0,0],\"readTimestamp\": false }}","path":"/gb/sagw/potentiaal/floor3/room313/room/light/lightpowerconsumption2_313"    },
+    { "type": "ZKReaderTask","id": "zkreader3","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0,0],\"readTimestamp\": false }}","path":"/gb/sagw/potentiaal/floor3/room313/room/light/statuslights1_313"    },
+    { "type": "ZKReaderTask","id": "zkreader4","zk_hosts":"129.125.84.113:2181","surrugate_task":"{\"type\":\"TCPReader\",\"host\":\"127,127,0,0\",\"port\": 8080,\"decoder\": {\"type\":\"ASCIIDecoder\",\"format\": [0,0,0,0],\"readTimestamp\": false }}","path":"/gb/sagw/potentiaal/floor3/room313/room/light/statuslights2_313"    },
+
+    { "type": "SelectiveSplitterTask", "id": "splitter1", "chSelection": [[2]] },
+    { "type": "SelectiveSplitterTask", "id": "splitter2", "chSelection": [[2]] },
+    
+    { "type": "SelectiveSplitterTask", "id": "splitter3", "chSelection": [[3]] },
+    { "type": "SelectiveSplitterTask", "id": "splitter4", "chSelection": [[3]] },
+    
+    { "type": "Mapping", "id": "mapper3", "sourceVec": [[1],[2]], "targetVec": [[1],[0]] },
+    { "type": "Mapping", "id": "mapper4", "sourceVec": [[1],[2]], "targetVec": [[1],[0]] },
+    
+    { "type": "Mapping", "id": "fullPowerDimmer1", "sourceVec": [[1],[0]], "targetVec": [[1000],[0]] },
+    { "type": "Mapping", "id": "fullPowerDimmer2", "sourceVec": [[1],[0]], "targetVec": [[1000],[0]] },
+    { "type": "Mapping", "id": "fullPowerDimmer3", "sourceVec": [[1],[0]], "targetVec": [[1000],[0]] },
+    { "type": "Mapping", "id": "fullPowerDimmer4", "sourceVec": [[1],[0]], "targetVec": [[1000],[0]] },
+        
+    {"type": "ZKReaderTask","id": "zkrwriter1","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer1\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.lightpowerconsumption1_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"light\", \"Json_varname\": \"lightpowerconsumption1_313\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter11","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer11\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"lightpowerconsumption1_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },  
+
+    {"type": "ZKReaderTask","id": "zkrwriter2","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer2\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.lightpowerconsumption2_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"light\", \"Json_varname\": \"lightpowerconsumption2_313\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter21","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer21\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"lightpowerconsumption2_313\", \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriter3","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer3\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.statuslights1_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"light\", \"Json_varname\": \"statuslights1_313\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter31","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer31\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"statuslights1_313\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrwriter4","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.statuslights2_313\", \"QueueName\": \"q2\", \"Json_type\": \"update\", \"Json_siname\": \"light\", \"Json_varname\": \"statuslights2_313\", \"varstateType\": 2 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrwriter41","zk_hosts":"129.125.84.113:2181","surrugate_task":"{ \"type\": \"CassandraWriter\", \"id\": \"writer41\", \"databaseIP\": \"131.155.237.78\", \"databasePort\": 9160, \"keysp\": \"gbrepository\", \"columnfam\": \"variables\", \"rowk\": \"statuslights2_313\", \"sendBool\": true, \"columnname\": \"updatedvalue\" }","path":"/gb/system/repository","mapping": "{\"databaseIP\":\"host\", \"databasePort\":\"port\"}" },
+    
+    {"type": "ZKReaderTask","id": "zkrDimmer1","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.dimmer1_313\", \"QueueName\": \"q2\", \"Json_type\": \"user_feedback\", \"Json_siname\": \"light\", \"Json_varname\": \"dimmer1_313\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrDimmer2","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.dimmer2_313\", \"QueueName\": \"q2\", \"Json_type\": \"user_feedback\", \"Json_siname\": \"light\", \"Json_varname\": \"dimmer2_313\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrDimmer3","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.dimmer3_313\", \"QueueName\": \"q2\", \"Json_type\": \"user_feedback\", \"Json_siname\": \"light\", \"Json_varname\": \"dimmer3_313\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"},
+    {"type": "ZKReaderTask","id": "zkrDimmer4","zk_hosts":"129.125.84.113:2181","surrugate_task": "{ \"type\": \"RabbitMQWriter\", \"id\": \"writer4\", \"host\": \"localhost\", \"port\": 5672, \"ExchangeName\": \"E2\", \"ExchangeType\": \"topic\", \"RoutingKey\": \"potentiaal.floor3.room313.room.light.dimmer4_313\", \"QueueName\": \"q2\", \"Json_type\": \"user_feedback\", \"Json_siname\": \"light\", \"Json_varname\": \"dimmer4_313\", \"varstateType\": 0 }","path":"/gb/system/rabbitmq"}
+
+  ],
+  "connections": [
+               
+    { "type": "Connection", "sourceTask": "zkreader1", "sourcePort": 0, "destTask": "splitter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "zkrwriter1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter1", "sourcePort": 0, "destTask": "zkrwriter11", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "zkreader2", "sourcePort": 0, "destTask": "splitter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "zkrwriter2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter2", "sourcePort": 0, "destTask": "zkrwriter21", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "zkreader3", "sourcePort": 0, "destTask": "splitter3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter3", "sourcePort": 0, "destTask": "mapper3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapper3", "sourcePort": 0, "destTask": "zkrwriter3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapper3", "sourcePort": 0, "destTask": "zkrwriter31", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "zkreader4", "sourcePort": 0, "destTask": "splitter4", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "splitter4", "sourcePort": 0, "destTask": "mapper4", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapper4", "sourcePort": 0, "destTask": "zkrwriter4", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapper4", "sourcePort": 0, "destTask": "zkrwriter41", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "mapper3", "sourcePort": 0, "destTask": "fullPowerDimmer1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapper3", "sourcePort": 0, "destTask": "fullPowerDimmer4", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "mapper4", "sourcePort": 0, "destTask": "fullPowerDimmer2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "mapper4", "sourcePort": 0, "destTask": "fullPowerDimmer3", "destPort": 0 },
+    
+    { "type": "Connection", "sourceTask": "fullPowerDimmer1", "sourcePort": 0, "destTask": "zkrDimmer1", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "fullPowerDimmer2", "sourcePort": 0, "destTask": "zkrDimmer2", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "fullPowerDimmer3", "sourcePort": 0, "destTask": "zkrDimmer3", "destPort": 0 },
+    { "type": "Connection", "sourceTask": "fullPowerDimmer4", "sourcePort": 0, "destTask": "zkrDimmer4", "destPort": 0 }
+    
+  ]
+}
